@@ -1,0 +1,80 @@
+{
+  "version": 2,
+  "www": "erdplus.com",
+  "shapes": [
+    {
+      "type": "Entity",
+      "details": {
+        "name": "Product",
+        "type": "regular",
+        "x": 400,
+        "y": 200,
+        "isDisjointed": true,
+        "isTotalSpecialization": true,
+        "isSubtype": false,
+        "supertypeEntityId": null,
+        "id": 1
+      }
+    },
+    {
+      "type": "Attribute",
+      "details": {
+        "name": "ProductID",
+        "isDerived": false,
+        "isMultivalued": false,
+        "isOptional": false,
+        "isComposite": false,
+        "isUnique": true,
+        "x": 400,
+        "y": 150,
+        "id": 2
+      }
+    },
+    {
+      "type": "Attribute",
+      "details": {
+        "name": "ProductNameID",
+        "isDerived": false,
+        "isMultivalued": false,
+        "isOptional": false,
+        "isComposite": false,
+        "isUnique": false,
+        "x": 400,
+        "y": 180,
+        "id": 3
+      }
+    },
+    {
+      "type": "Attribute",
+      "details": {
+        "name": "ModelID",
+        "isDerived": false,
+        "isMultivalued": false,
+        "isOptional": false,
+        "isComposite": false,
+        "isUnique": false,
+        "x": 400,
+        "y": 210,
+        "id": 4
+      }
+    }
+  ],
+  "connectors": [
+    {
+      "type": "Connector",
+      "details": {
+        "id": 100
+      },
+      "source": 3,
+      "destination": 1
+    },
+    {
+      "type": "Connector",
+      "details": {
+        "id": 101
+      },
+      "source": 4,
+      "destination": 1
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "grupo": 20,
+  "actions": [
+    {
+      "sensitive_fields": {
+        "Password_filled": 18484,
+        "NIF_filled": 18484
+      }
+    }
+  ]
+}
