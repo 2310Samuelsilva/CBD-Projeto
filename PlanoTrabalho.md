@@ -31,6 +31,11 @@ Fazer algo quanto a isto?
 
 TotalSalesAmount (possivelmente preco total para esse produto? a venda nao inclui quantas unidades foram vendidas.. sera que conseguimos calcular com base no preco unitario e este total?)
 
+7. Encriptacao / Hashing
+
+Password: Utilizar um algoritmo irreversivel
+NIF: Enciptar, como?
+Perguntas e respostas para recuperar passord: Utilizar HASH256 possibilidat recuperar.
 
 
 # Conjuntos de Entidades
@@ -202,12 +207,6 @@ TotalSalesAmount (possivelmente preco total para esse produto? a venda nao inclu
 - `CountryID` (PK)
 - `Code` (ex.: AU)
 - `Name` (ex.: Australia)
-
-### SalesTerritory
-**Representa a região de vendas atribuída ao cliente.**
-- `SalesTerritoryID` (PK)
-- `Name` (ex.: Northwest)
-- `Region` (opcional)
 
 #---------------------------------------------------------------------------------
                                     CUSTOMER
