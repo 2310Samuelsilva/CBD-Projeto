@@ -41,283 +41,328 @@ Perguntas e respostas para recuperar passord: Utilizar HASH256 possibilidat recu
 # Conjuntos de Entidades
 
 #---------------------------------------------------------------------------------
-                                    PRODUCTS
+#                                   PRODUCTS
 #---------------------------------------------------------------------------------
 
-### Product
-**Representa um produto disponível**
-- `ProductID`
-- `ProductNameID` (FK → ProductNames)
-- `ModelID` (FK → ProductModels)
-- `ColorID` (FK → ProductColors)
-- `CategoryID` (FK → ProductCategory)
-- `SubcategoryID` (FK → SubCategory)
-- `ProductLineID` (FK → ProductLine)
-- `ClassID` (FK → ProductClass)
-- `StyleID` (FK → ProductStyle)
-- `Size` [TEXT *some have numbers other letters, 38/L/M/S...]
-- `SizeRangeID` (FK → ProductSizeRange)
-- `SizeUnitMeasureCode` (FK → UnitOfMeasure)
-- `WeightUnitMeasureCode` (FK → UnitOfMeasure)
-- `Weight`
-- `FinishedGoodsFlag`
-- `StandardCost`
-- `ListPrice`
-- `DealerPrice`
-- `DaysToManufacture`
-- `Description`
+### ProductMaster
+**Representa o produto base (ex.: “HL Touring Frame”)**
+- `product_master_id` (PK)
+- `product_name` (ex.: “HL Touring Frame”)  ← stored directly
+- `model` (ex.: “HL Touring Frame”)         ← stored directly
+- `category_id` (FK → ProductCategory)
+- `subcategory_id` (FK → ProductSubcategory)
+- `product_line_id` (FK → ProductLine, opcional)
+- `class_id` (FK → ProductClass, opcional)
+- `style_id` (FK → ProductStyle, opcional)
+- `description` (ex.: “The HL aluminum frame is custom-shaped for strength and durability.”)
 
-### ProductNames
-**Representa os nomes dos produtos.**
-- `ProductNameID`
-- `Name` (ex.: “HL Road Frame - Black”)
+---
 
-### ProductModels
-**Representa o modelo de um produto.**
-- `ModelID`
-- `Name` (ex.: “HL Road Frame”)
+### ProductVariant
+**Representa uma variação específica de um produto (cor, tamanho, peso, preço).**
+- `product_variant_id` (PK)
+- `product_master_id` (FK → ProductMaster)
+- `color_id` (FK → ProductColors, opcional)
+- `size` (ex.: 'S', 'L', '60')
+- `size_range_id` (FK → ProductSizeRange, opcional)
+- `size_unit_measure_code` (FK → UnitOfMeasure, opcional)
+- `weight` (DECIMAL, ex.: 3.08, opcional)
+- `weight_unit_measure_code` (FK → UnitOfMeasure, opcional)
+- `finished_goods_flag` (BIT)
+- `standard_cost` (DECIMAL(10,2))
+- `list_price` (DECIMAL(10,2))
+- `dealer_price` (DECIMAL(10,2))
+- `days_to_manufacture` (INT)
+
+---
 
 ### ProductColors
 **Representa a cor de um produto.**
-- `ColorID`
-- `Name` (ex.: “Black”)
+- `color_id` (PK)
+- `name` (ex.: “Blue”, “Yellow”)
 
-### ProductCategory (Fazer uma tabela com referencia a ela propria???)
+---
+
+### ProductCategory
 **Representa a categoria do produto.**
-- `CategoryID`
-- `Name` (ex.: “Components”)
+- `category_id` (PK)
+- `name` (ex.: “Components”)
 
-### SubCategory
+---
+
+### ProductSubcategory
 **Representa a subcategoria de um produto.**
-- `SubcategoryID`
-- `CategoryID` (FK → ProductCategory)
-- `Name` (ex.: “Frames”)
+- `subcategory_id` (PK)
+- `category_id` (FK → ProductCategory)
+- `name` (ex.: “Frames”)
+
+---
 
 ### ProductLine
 **Representa a linha do produto.**
-- `ProductLineID`
-- `Name` (ex.: “R”)
+- `product_line_id` (PK)
+- `name` (ex.: “T”)
+
+---
 
 ### ProductClass
 **Representa a classe do produto.**
-- `ClassID`
-- `Name` (ex.: “H”)
+- `class_id` (PK)
+- `name` (ex.: “H”)
+
+---
 
 ### ProductStyle
 **Representa o estilo do produto.**
-- `StyleID`
-- `Name` (ex.: “U”)
+- `style_id` (PK)
+- `name` (ex.: “U”)
+
+---
 
 ### ProductSizeRange
 **Representa a gama de tamanhos de um produto.**
-- `SizeRangeID`
-- `Name` (ex.: “54-58 CM”)
+- `size_range_id` (PK)
+- `name` (ex.: “60-62 CM”)
+
+---
 
 ### UnitOfMeasure
 **Representa as unidades de medida.**
-- `Code` (ex.: LB, CM)
-- `Name` (ex.: Pounds, Centimeters)
-- `ConversionToBase` (ex.: 0.453592 para LB → kg)
+- `unit_measure_code` (PK)
+- `name` (ex.: “Pounds”, “Centimeters”)
+- `conversion_to_base` (DECIMAL(10,6), ex.: 0.453592 para LB → KG)
+
 
 
 #---------------------------------------------------------------------------------
-                                    SALES
+#                                   SALES
 #---------------------------------------------------------------------------------
 
 ### SalesOrder
-**Representa uma venda.**
-- `SalesOrderID` (PK, surrogate key)
-- `SalesOrderNumber` (ex.: SO43697)
-- `CustomerID` (FK → Customer)
-- `SalesTerritoryID` (FK → SalesTerritory)
-- `OrderDate` (ex.: 2010-12-29)
-- `DueDate` (ex.: 2011-01-10)
-- `ShipDate` (ex.: 2011-01-05)
+**Representa uma venda (pedido principal).**
+- `sales_order_id` (PK, surrogate key)
+- `sales_order_number` (ex.: 'SO43697')
+- `customer_id` (FK → Customer)
+- `sales_territory_id` (FK → SalesTerritory)
+- `order_date` (DATE, ex.: 2010-12-29)
+- `due_date` (DATE, ex.: 2011-01-10)
+- `ship_date` (DATE, ex.: 2011-01-05)
+
+---
 
 ### SalesOrderLine
-**Representa um produto dentro de um pedido.**
-- `SalesOrderLineID` (PK, surrogate key)
-- `SalesOrderID` (FK → SalesOrder)
-- `LineNumber` (ex.: 1)
-- `ProductID` (FK → Product)
-- `CurrencyID` (FK → Currency)
-- `ProductStandardCost` (ex.: 2171.29)
-- `UnitPrice` (ex.: 3578.27)
-- `Quantity` (ex.: 1)
-- `TotalSalesAmount` (ex.: 3578.27) !!! Para cortar, substituir com quantidade
-- `TaxAmt` (ex.: 286.26)
-- `Freight` (ex.: 89.46)
+**Representa uma variação de produto vendida dentro de um pedido.**
+- `sales_order_line_id` (PK, surrogate key)
+- `sales_order_id` (FK → SalesOrder)
+- `line_number` (INT, ex.: 1)
+- `product_variant_id` (FK → ProductVariant)
+- `currency_id` (FK → Currency)
+- `product_standard_cost` (DECIMAL(10,2), ex.: 2171.29)
+- `unit_price` (DECIMAL(10,2), ex.: 3578.27)
+- `quantity` (INT, ex.: 1)
+- `tax_amt` (DECIMAL(10,2), ex.: 286.26)
+- `freight` (DECIMAL(10,2), ex.: 89.46)
 
+> 💡 `total_sales_amount` foi removido — pode ser calculado dinamicamente como `(unit_price * quantity)`.
+
+---
 
 ### SalesTerritory
 **Representa uma região ou território de vendas.**
-- `SalesTerritoryID`
-- `Name` (ex.: Northwest)
-- `Region` (opcional)
+- `sales_territory_id` (PK)
+- `name` (NVARCHAR(100), ex.: “Northwest”)
+- `region` (NVARCHAR(100), opcional)
+
+---
 
 ### Currency
 **Representa a moeda usada nas transações.**
-- `CurrencyID`
-- `Code` (ex.: USD, EUR)
-- `Name` (ex.: United States Dollar)
+- `currency_id` (PK)
+- `code` (NVARCHAR(10), ex.: “USD”, “EUR”)
+- `name` (NVARCHAR(50), ex.: “United States Dollar”)
+
+---
+
+
 
 #---------------------------------------------------------------------------------
-                                    CUSTOMER
+#                                   CUSTOMER
 #---------------------------------------------------------------------------------
 
 ### Customer
 **Representa um cliente.**
-- `CustomerID` (PK, surrogate key)
-- `Title` (ex.: “Mr.”)
-- `FirstName` (ex.: “Jon”)
-- `MiddleName` (ex.: “V”)
-- `LastName` (ex.: “Yang”)
-- `BirthDate` (ex.: 1966-04-08)
-- `MaritalStatus` (ex.: M, S)
-- `Gender` (ex.: M, F)
-- `EmailAddress` (ex.: jon24@adventure-works.com)
-- `YearlyIncome` (ex.: 90000)
-- `Education` (ex.: Bachelors)
-- `Occupation` (ex.: Professional)
-- `NumberCarsOwned` (ex.: 0)
-- `DateFirstPurchase` (ex.: 2005-07-22)
-- `PasswordHash` (ex.: pbkdf2$sha256$95830$b9c64076aacb75de)
-- `NIF` (ex.: 269192666)
+- `customer_id` (PK, surrogate key)
+- `title` (NVARCHAR(20), ex.: “Mr.”)
+- `first_name` (NVARCHAR(50), ex.: “Jon”)
+- `middle_name` (NVARCHAR(50), ex.: “V”)
+- `last_name` (NVARCHAR(50), ex.: “Yang”)
+- `birth_date` (DATE, ex.: 1966-04-08)
+- `marital_status` (CHAR(1), ex.: M, S)
+- `gender` (CHAR(1), NULL – opcional conforme regra do grupo)
+- `email_address` (NVARCHAR(100), ex.: jon24@adventure-works.com)
+- `yearly_income` (DECIMAL(10,2), ex.: 90000)
+- `education` (NVARCHAR(50), ex.: “Bachelors”)
+- `occupation` (NVARCHAR(50), ex.: “Professional”)
+- `number_cars_owned` (INT, ex.: 0)
+- `date_first_purchase` (DATE, ex.: 2005-07-22)
+- `nif` (NVARCHAR(20), armazenado **encriptado**)
+
+> 🔒 **Campos sensíveis:**  
+> - `nif` → armazenado encriptado (AES, Chave simétrica).  
+
+---
 
 ### CustomerAddress
-**Representa o endereço do cliente.**
-- `CustomerAddressID` (PK, surrogate key)
-- `CustomerID` (FK → Customer)
-- `AddressLine1` (ex.: 3761 N. 14th St)
-- `City` (ex.: Rockhampton)
-- `StateProvinceID` (FK → StateProvince)
-- `PostalCode` (ex.: 4700)
-- `CountryID` (FK → CountryRegion)
-- `Phone` (ex.: 1 (11) 500 555-0162)
+**Representa o endereço de um cliente.**
+- `customer_address_id` (PK, surrogate key)
+- `customer_id` (FK → Customer)
+- `address_line1` (NVARCHAR(255), ex.: 3761 N. 14th St)
+- `city` (NVARCHAR(100), ex.: Rockhampton)
+- `state_province_id` (FK → StateProvince)
+- `postal_code` (NVARCHAR(20), ex.: 4700)
+- `country_id` (FK → CountryRegion)
+- `phone` (NVARCHAR(50), ex.: 1 (11) 500 555-0162)
+
+---
 
 ### StateProvince
-**Representa estados ou províncias de um país.**
-- `StateProvinceID` (PK)
-- `Code` (ex.: QLD)
-- `Name` (ex.: Queensland)
-- `CountryID` (FK → CountryRegion)
+**Representa um estado ou província.**
+- `state_province_id` (PK)
+- `code` (NVARCHAR(10), ex.: QLD)
+- `name` (NVARCHAR(100), ex.: Queensland)
+- `country_id` (FK → CountryRegion)
+
+---
 
 ### CountryRegion
 **Representa um país ou região.**
-- `CountryID` (PK)
-- `Code` (ex.: AU)
-- `Name` (ex.: Australia)
+- `country_id` (PK)
+- `code` (NVARCHAR(10), ex.: AU)
+- `name` (NVARCHAR(100), ex.: Australia)
+
+---
 
 #---------------------------------------------------------------------------------
-                                    CUSTOMER
+#                                   APP USERS
 #---------------------------------------------------------------------------------
 
 ### AppUser
 **Representa um utilizador da aplicação (cliente ou administrativo).**
-- `AppUserID` (PK)
-- `CustomerID` (FK → Customer, opcional se for um cliente)
-- `Email` (ex.: jon24@adventure-works.com)
-- `PasswordHash` (ex.: pbkdf2$sha256$95830$b9c64076aacb75de)
-- `IsActive` (bool, ex.: True/False)
-- `CreatedAt` (timestamp)
-- `LastLogin` (timestamp)
+- `app_user_id` (PK)
+- `customer_id` (FK → Customer, opcional)
+- `email` (NVARCHAR(100), único)
+- `password_hash` (NVARCHAR(255), **hash irreversível**)
+- `is_active` (BIT DEFAULT 1)
+- `created_at` (DATETIME DEFAULT GETDATE())
+- `last_login` (DATETIME)
+
+> 🔒 **Campos sensíveis:**  
+> - `password_hash` → armazenado com hash (ex.: PBKDF2, bcrypt). 
+
+---
 
 ### PasswordRecoveryQuestion
 **Pergunta de segurança para recuperação de password.**
-- `QuestionID` (PK)
-- `AppUserID` (FK → AppUser)
-- `QuestionText` (ex.: “Qual é o nome da sua primeira escola?”)
-- `AnswerHash` (hashed resposta do utilizador)
+- `question_id` (PK)
+- `app_user_id` (FK → AppUser)
+- `question_text` (NVARCHAR(255), ex.: “Qual é o nome da sua primeira escola?”)
+- `answer_hash` (NVARCHAR(255), armazenada com **hash ou ofuscação reversível**)
+
+> 🔒 **Segurança:**  
+> - `answer_hash` deve ser **ofuscado** (pode ser revertido em texto claro se necessário).  
+> - `password_hash` nunca deve ser recuperável (apenas comparável via hash).
+
+---
 
 ### SentEmails
 **Simula envio de emails.**
-- `SentEmailID` (PK)
-- `RecipientEmail` (ex.: jon24@adventure-works.com)
-- `Subject` (ex.: “Nova password gerada”)
-- `Message` (ex.: “Sua nova password é …”)
-- `SentAt` (timestamp)
+- `sent_email_id` (PK)
+- `recipient_email` (NVARCHAR(100), ex.: jon24@adventure-works.com)
+- `subject` (NVARCHAR(255), ex.: “Nova password gerada”)
+- `message` (NVARCHAR(MAX), ex.: “Sua nova password é …”)
+- `sent_at` (DATETIME DEFAULT GETDATE())
+
+---
 
 
-## Conjuntos de Relacionamentos & Restrições
+## Conjuntos de Relacionamentos & Restrições - FIXED
 
 #---------------------------------------------------------------------------------
-                                    PRODUCTS
+#                                   PRODUCTS
 #---------------------------------------------------------------------------------
 
----
-
-### Product_ProductName (N:1)
-- Um **Product** “tem” um **ProductName**.  
-- **1 ProductName** pode estar associado a **N Products** *(participação parcial)*.  
-- **1 Product** tem **sempre 1 ProductName** *(participação total)*.
+### ProductMaster_ProductVariant (1:N)
+- Um **ProductMaster** “possui” várias **ProductVariants**.  
+- **1 ProductMaster** pode ter **N ProductVariants** *(participação total)*.  
+- **1 ProductVariant** pertence **sempre** a **1 ProductMaster** *(participação total)*.
 
 ---
 
-### Product_ProductModel (N:1)
-- Um **Product** “pertence a” um **ProductModel**.  
-- **1 ProductModel** pode estar associado a **N Products** *(participação parcial)*.  
-- **1 Product** tem **sempre 1 ProductModel** *(participação total)*.
-
----
-
-### Product_ProductColor (N:1)
-- Um **Product** “tem” uma **cor**.  
-- **1 ProductColor** pode ser usada por **N Products** *(participação parcial)*.  
-- **1 Product** pode **não ter cor** *(participação parcial)*.
+### ProductMaster_ProductCategory (N:1)
+- Um **ProductMaster** “pertence a” uma **ProductCategory**.  
+- **1 ProductCategory** pode conter **N ProductMasters** *(participação parcial)*.  
+- **1 ProductMaster** pertence **sempre** a **1 ProductCategory** *(participação total)*.
 
 ---
 
 ### ProductCategory_SubCategory (1:N)
-- Uma **ProductCategory** “possui” várias **SubCategories**.  
-- **1 ProductCategory** pode ter **N SubCategories** *(participação parcial)*.  
-- **1 SubCategory** pertence **sempre** a **1 ProductCategory** *(participação total)*.
+- Uma **ProductCategory** “possui” várias **ProductSubcategories**.  
+- **1 ProductCategory** pode ter **N ProductSubcategories** *(participação total)*.  
+- **1 ProductSubcategory** pertence **sempre** a **1 ProductCategory** *(participação total)*.
 
 ---
 
-### SubCategory_Product (1:N)
-- Uma **SubCategory** “contém” vários **Products**.  
-- **1 SubCategory** pode ter **N Products** *(participação parcial)*.  
-- **1 Product** pertence **sempre** a **1 SubCategory** *(participação total)*.
+### ProductSubcategory_ProductMaster (1:N)
+- Uma **ProductSubcategory** “contém” vários **ProductMasters**.  
+- **1 ProductSubcategory** pode ter **N ProductMasters** *(participação parcial)*.  
+- **1 ProductMaster** pertence **sempre** a **1 ProductSubcategory** *(participação total)*.
 
 ---
 
-### Product_ProductLine (N:1)
-- Um **Product** “pertence a” uma **ProductLine**.  
-- **1 ProductLine** pode ter **N Products** *(participação parcial)*.  
-- **1 Product** pode **não ter ProductLine** *(participação parcial)*.
+### ProductVariant_ProductColor (N:1)
+- Um **ProductVariant** “tem” uma **ProductColor**.  
+- **1 ProductColor** pode ser usada por **N ProductVariants** *(participação parcial)*.  
+- **1 ProductVariant** pode **não ter cor** *(participação parcial)*.
 
 ---
 
-### Product_ProductClass (N:1)
-- Um **Product** “pertence a” uma **ProductClass**.  
-- **1 ProductClass** pode ter **N Products** *(participação parcial)*.  
-- **1 Product** pode **não ter ProductClass** *(participação parcial)*.
+### ProductVariant_ProductLine (N:1)
+- Um **ProductVariant** “pertence a” uma **ProductLine**.  
+- **1 ProductLine** pode ter **N ProductVariants** *(participação parcial)*.  
+- **1 ProductVariant** pode **não ter ProductLine** *(participação parcial)*.
 
 ---
 
-### Product_ProductStyle (N:1)
-- Um **Product** “possui” um **ProductStyle**.  
-- **1 ProductStyle** pode estar associado a **N Products** *(participação parcial)*.  
-- **1 Product** pode **não ter ProductStyle** *(participação parcial)*.
+### ProductVariant_ProductClass (N:1)
+- Um **ProductVariant** “pertence a” uma **ProductClass**.  
+- **1 ProductClass** pode ter **N ProductVariants** *(participação parcial)*.  
+- **1 ProductVariant** pode **não ter ProductClass** *(participação parcial)*.
 
 ---
 
-### Product_ProductSizeRange (N:1)
-- Um **Product** “tem” um **ProductSizeRange**.  
-- **1 ProductSizeRange** pode estar associado a **N Products** *(participação parcial)*.  
-- **1 Product** pode **não ter SizeRange** *(participação parcial)*.
+### ProductVariant_ProductStyle (N:1)
+- Um **ProductVariant** “possui” um **ProductStyle**.  
+- **1 ProductStyle** pode estar associado a **N ProductVariants** *(participação parcial)*.  
+- **1 ProductVariant** pode **não ter ProductStyle** *(participação parcial)*.
 
 ---
 
-### Product_UnitOfMeasure (N:1)
-- Um **Product** “utiliza” unidades de medida (peso e tamanho).  
-- **1 UnitOfMeasure** pode ser usada em **N Products** *(participação parcial)*.  
-- **1 Product** pode **não ter unidade definida** *(participação parcial)*.
+### ProductVariant_ProductSizeRange (N:1)
+- Um **ProductVariant** “tem” um **ProductSizeRange**.  
+- **1 ProductSizeRange** pode estar associado a **N ProductVariants** *(participação parcial)*.  
+- **1 ProductVariant** pode **não ter SizeRange** *(participação parcial)*.
+
+---
+
+### ProductVariant_UnitOfMeasure (N:1)
+- Um **ProductVariant** “utiliza” unidades de medida (peso e tamanho).  
+- **1 UnitOfMeasure** pode ser usada em **N ProductVariants** *(participação parcial)*.  
+- **1 ProductVariant** pode **não ter unidade definida** *(participação parcial)*.
 
 ---
 
 #---------------------------------------------------------------------------------
-                                    SALES
+#                                   SALES
 #---------------------------------------------------------------------------------
 
 ### SalesOrder_SalesOrderLine (1:N)
@@ -327,10 +372,10 @@ Perguntas e respostas para recuperar passord: Utilizar HASH256 possibilidat recu
 
 ---
 
-### SalesOrderLine_Product (N:1)
-- Uma **SalesOrderLine** “refere-se a” um **Product**.  
-- **1 Product** pode aparecer em **N SalesOrderLines** *(participação parcial)*.  
-- **1 SalesOrderLine** refere-se **sempre** a **1 Product** *(participação total)*.
+### SalesOrderLine_ProductVariant (N:1)
+- Uma **SalesOrderLine** “refere-se a” um **ProductVariant**.  
+- **1 ProductVariant** pode aparecer em **N SalesOrderLines** *(participação parcial)*.  
+- **1 SalesOrderLine** refere-se **sempre** a **1 ProductVariant** *(participação total)*.
 
 ---
 
@@ -356,7 +401,7 @@ Perguntas e respostas para recuperar passord: Utilizar HASH256 possibilidat recu
 ---
 
 #---------------------------------------------------------------------------------
-                                    CUSTOMER
+#                                   CUSTOMER
 #---------------------------------------------------------------------------------
 
 ### Customer_CustomerAddress (1:N)
@@ -380,12 +425,9 @@ Perguntas e respostas para recuperar passord: Utilizar HASH256 possibilidat recu
 
 ---
 
-### Customer_SalesTerritory (N:1)
-- Um **Customer** “está associado a” um **SalesTerritory**.  
-- **1 SalesTerritory** pode ter **N Customers** *(participação parcial)*.  
-- **1 Customer** pertence **sempre** a **1 SalesTerritory** *(participação total)*.
-
----
+#---------------------------------------------------------------------------------
+#                                   APP USERS
+#---------------------------------------------------------------------------------
 
 ### AppUser_Customer (1:1)
 - Um **AppUser** “pode estar associado a” um **Customer**.  
@@ -405,18 +447,16 @@ Perguntas e respostas para recuperar passord: Utilizar HASH256 possibilidat recu
 - Um **AppUser** “pode enviar” vários **SentEmails**.  
 - **1 AppUser** pode ter **N emails enviados** *(participação parcial)*.  
 - **1 SentEmail** pertence **sempre** a **1 AppUser** *(participação total)*.
-
-
 # 5. Modelo relacional
 
-#---------------------------------------------------------------------------------
+##---------------------------------------------------------------------------------
 #                                   PRODUCTS
 #---------------------------------------------------------------------------------
 
 `Product`(
     product_id,
-    product_name_id,
-    model_id,
+    product_name,
+    model,
     color_id,
     category_id,
     subcategory_id,
@@ -437,29 +477,15 @@ Perguntas e respostas para recuperar passord: Utilizar HASH256 possibilidat recu
 )
 Chave primaria: {product_id}
 Chave estrangeira:
-{product_name_id} → product_name {product_name_id}
-{model_id} → product_model {model_id}
-{color_id} → product_color {color_id}
-{category_id} → product_category {category_id}
-{subcategory_id} → product_subcategory {subcategory_id}
-{product_line_id} → product_line {product_line_id}
-{class_id} → product_class {class_id}
-{style_id} → product_style {style_id}
-{size_range_id} → product_size_range {size_range_id}
-{size_unit_code} → unit_of_measure {code}
-{weight_unit_code} → unit_of_measure {code}
-
-`ProductName`(
-    product_name_id,
-    name
-)
-Chave primaria: {product_name_id}
-
-`ProductModel`(
-    model_id,
-    name
-)
-Chave primaria: {model_id}
+{color_id} → ProductColor {color_id}
+{category_id} → ProductCategory {category_id}
+{subcategory_id} → ProductSubcategory {subcategory_id}
+{product_line_id} → ProductLine {product_line_id}
+{class_id} → ProductClass {class_id}
+{style_id} → ProductStyle {style_id}
+{size_range_id} → ProductSizeRange {size_range_id}
+{size_unit_code} → UnitOfMeasure {code}
+{weight_unit_code} → UnitOfMeasure {code}
 
 `ProductColor`(
     color_id,
@@ -480,7 +506,7 @@ Chave primaria: {category_id}
 )
 Chave primaria: {subcategory_id}
 Chave estrangeira:
-{category_id} → product_category {category_id}
+{category_id} → ProductCategory {category_id}
 
 `ProductLine`(
     product_line_id,
@@ -540,7 +566,6 @@ Chave estrangeira:
     product_standard_cost,
     unit_price,
     quantity,
-    total_sales_amount,
     tax_amt,
     freight
 )
