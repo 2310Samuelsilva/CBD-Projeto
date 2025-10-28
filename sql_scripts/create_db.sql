@@ -1,5 +1,4 @@
-
-IF NOT EXISTS (SELECT *  FROM sys.databases where name='AdventureWorks')
+IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'AdventureWorks')
 BEGIN
     CREATE DATABASE AdventureWorks;
 END
@@ -11,24 +10,6 @@ GO
 --=================================================================================
 --                                   PRODUCTS
 --=================================================================================
-
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductName')
-BEGIN
-    CREATE TABLE ProductName (
-        product_name_id INT IDENTITY(1,1) CONSTRAINT PK_ProductName PRIMARY KEY,
-        name NVARCHAR(255) NOT NULL
-    );
-END
-GO
-
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductModel')
-BEGIN
-    CREATE TABLE ProductModel (
-        model_id INT IDENTITY(1,1) CONSTRAINT PK_ProductModel PRIMARY KEY,
-        name NVARCHAR(255) NOT NULL
-    );
-END
-GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductColor')
 BEGIN
@@ -99,8 +80,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'UnitOfMeasure')
 BEGIN
     CREATE TABLE UnitOfMeasure (
-        unit_id INT IDENTITY(1,1) CONSTRAINT PK_UnitOfMeasure PRIMARY KEY,
-        code NVARCHAR(10) NOT NULL,
+        code NVARCHAR(10) CONSTRAINT PK_UnitOfMeasure PRIMARY KEY,
         name NVARCHAR(50) NOT NULL,
         conversion_to_base DECIMAL(10,6)
     );
@@ -111,8 +91,8 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Product')
 BEGIN
     CREATE TABLE Product (
         product_id INT IDENTITY(1,1) CONSTRAINT PK_Product PRIMARY KEY,
-        product_name_id INT NOT NULL,
-        model_id INT NOT NULL,
+        product_name NVARCHAR(255) NOT NULL,
+        model NVARCHAR(255) NOT NULL,
         color_id INT,
         category_id INT NOT NULL,
         subcategory_id INT,
@@ -121,8 +101,8 @@ BEGIN
         style_id INT,
         size NVARCHAR(10),
         size_range_id INT,
-        size_unit_id INT,
-        weight_unit_id INT,
+        size_unit_code NVARCHAR(10),
+        weight_unit_code NVARCHAR(10),
         weight DECIMAL(10,2),
         finished_goods_flag BIT,
         standard_cost DECIMAL(10,2),
@@ -130,8 +110,6 @@ BEGIN
         dealer_price DECIMAL(10,2),
         days_to_manufacture INT,
         description NVARCHAR(1000),
-        CONSTRAINT FK_Product_ProductName FOREIGN KEY (product_name_id) REFERENCES ProductName(product_name_id),
-        CONSTRAINT FK_Product_ProductModel FOREIGN KEY (model_id) REFERENCES ProductModel(model_id),
         CONSTRAINT FK_Product_ProductColor FOREIGN KEY (color_id) REFERENCES ProductColor(color_id),
         CONSTRAINT FK_Product_ProductCategory FOREIGN KEY (category_id) REFERENCES ProductCategory(category_id),
         CONSTRAINT FK_Product_ProductSubcategory FOREIGN KEY (subcategory_id) REFERENCES ProductSubcategory(subcategory_id),
@@ -139,11 +117,12 @@ BEGIN
         CONSTRAINT FK_Product_ProductClass FOREIGN KEY (class_id) REFERENCES ProductClass(class_id),
         CONSTRAINT FK_Product_ProductStyle FOREIGN KEY (style_id) REFERENCES ProductStyle(style_id),
         CONSTRAINT FK_Product_ProductSizeRange FOREIGN KEY (size_range_id) REFERENCES ProductSizeRange(size_range_id),
-        CONSTRAINT FK_Product_SizeUnit FOREIGN KEY (size_unit_id) REFERENCES UnitOfMeasure(unit_id),
-        CONSTRAINT FK_Product_WeightUnit FOREIGN KEY (weight_unit_id) REFERENCES UnitOfMeasure(unit_id)
+        CONSTRAINT FK_Product_SizeUnit FOREIGN KEY (size_unit_code) REFERENCES UnitOfMeasure(code),
+        CONSTRAINT FK_Product_WeightUnit FOREIGN KEY (weight_unit_code) REFERENCES UnitOfMeasure(code)
     );
 END
 GO
+
 
 --=================================================================================
 --                                   CUSTOMER
@@ -166,7 +145,8 @@ BEGIN
         code NVARCHAR(10),
         name NVARCHAR(100),
         country_id INT,
-        CONSTRAINT FK_StateProvince_Country FOREIGN KEY (country_id) REFERENCES CountryRegion(country_id)
+        CONSTRAINT FK_StateProvince_Country FOREIGN KEY (country_id)
+            REFERENCES CountryRegion(country_id)
     );
 END
 GO
@@ -189,7 +169,7 @@ BEGIN
         number_cars_owned INT,
         date_first_purchase DATE,
         password_hash NVARCHAR(255),
-        nif BIGINT
+        nif NVARCHAR(20)
     );
 END
 GO
@@ -211,6 +191,7 @@ BEGIN
     );
 END
 GO
+
 
 --=================================================================================
 --                                   SALES
@@ -272,6 +253,7 @@ BEGIN
     );
 END
 GO
+
 
 --=================================================================================
 --                                   APP USERS
