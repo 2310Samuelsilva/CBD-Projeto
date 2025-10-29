@@ -447,101 +447,131 @@ Perguntas e respostas para recuperar passord: Utilizar HASH256 possibilidat recu
 - Um **AppUser** “pode enviar” vários **SentEmails**.  
 - **1 AppUser** pode ter **N emails enviados** *(participação parcial)*.  
 - **1 SentEmail** pertence **sempre** a **1 AppUser** *(participação total)*.
-# 5. Modelo relacional
+
+
+# 5. Modelo Relacional
 
 ##---------------------------------------------------------------------------------
 #                                   PRODUCTS
-#---------------------------------------------------------------------------------
+##---------------------------------------------------------------------------------
 
-`Product`(
-    product_id,
+`ProductMaster`(
+    product_master_id,
     product_name,
     model,
-    color_id,
     category_id,
     subcategory_id,
     product_line_id,
     class_id,
     style_id,
-    size,
-    size_range_id,
-    size_unit_code,
-    weight_unit_code,
-    weight,
-    finished_goods_flag,
-    standard_cost,
-    list_price,
-    dealer_price,
-    days_to_manufacture,
     description
 )
-Chave primaria: {product_id}
-Chave estrangeira:
-{color_id} → ProductColor {color_id}
+Chave primária: {product_master_id}
+Chaves estrangeiras:
 {category_id} → ProductCategory {category_id}
 {subcategory_id} → ProductSubcategory {subcategory_id}
 {product_line_id} → ProductLine {product_line_id}
 {class_id} → ProductClass {class_id}
 {style_id} → ProductStyle {style_id}
-{size_range_id} → ProductSizeRange {size_range_id}
-{size_unit_code} → UnitOfMeasure {code}
-{weight_unit_code} → UnitOfMeasure {code}
 
-`ProductColor`(
+---
+
+`ProductVariant`(
+    product_variant_id,
+    product_master_id,
+    color_id,
+    size,
+    size_range_id,
+    size_unit_measure_code,
+    weight,
+    weight_unit_measure_code,
+    finished_goods_flag,
+    standard_cost,
+    list_price,
+    dealer_price,
+    days_to_manufacture
+)
+Chave primária: {product_variant_id}
+Chaves estrangeiras:
+{product_master_id} → ProductMaster {product_master_id}
+{color_id} → ProductColors {color_id}
+{size_range_id} → ProductSizeRange {size_range_id}
+{size_unit_measure_code} → UnitOfMeasure {unit_measure_code}
+{weight_unit_measure_code} → UnitOfMeasure {unit_measure_code}
+
+---
+
+`ProductColors`(
     color_id,
     name
 )
-Chave primaria: {color_id}
+Chave primária: {color_id}
+
+---
 
 `ProductCategory`(
     category_id,
     name
 )
-Chave primaria: {category_id}
+Chave primária: {category_id}
+
+---
 
 `ProductSubcategory`(
     subcategory_id,
     category_id,
     name
 )
-Chave primaria: {subcategory_id}
+Chave primária: {subcategory_id}
 Chave estrangeira:
 {category_id} → ProductCategory {category_id}
+
+---
 
 `ProductLine`(
     product_line_id,
     name
 )
-Chave primaria: {product_line_id}
+Chave primária: {product_line_id}
+
+---
 
 `ProductClass`(
     class_id,
     name
 )
-Chave primaria: {class_id}
+Chave primária: {class_id}
+
+---
 
 `ProductStyle`(
     style_id,
     name
 )
-Chave primaria: {style_id}
+Chave primária: {style_id}
+
+---
 
 `ProductSizeRange`(
     size_range_id,
     name
 )
-Chave primaria: {size_range_id}
+Chave primária: {size_range_id}
+
+---
 
 `UnitOfMeasure`(
-    code,
+    unit_measure_code,
     name,
     conversion_to_base
 )
-Chave primaria: {code}
+Chave primária: {unit_measure_code}
 
-#---------------------------------------------------------------------------------
+---
+
+##---------------------------------------------------------------------------------
 #                                   SALES
-#---------------------------------------------------------------------------------
+##---------------------------------------------------------------------------------
 
 `SalesOrder`(
     sales_order_id,
@@ -552,16 +582,18 @@ Chave primaria: {code}
     due_date,
     ship_date
 )
-Chave primaria: {sales_order_id}
-Chave estrangeira:
+Chave primária: {sales_order_id}
+Chaves estrangeiras:
 {customer_id} → Customer {customer_id}
 {sales_territory_id} → SalesTerritory {sales_territory_id}
+
+---
 
 `SalesOrderLine`(
     sales_order_line_id,
     sales_order_id,
     line_number,
-    product_id,
+    product_variant_id,
     currency_id,
     product_standard_cost,
     unit_price,
@@ -569,29 +601,35 @@ Chave estrangeira:
     tax_amt,
     freight
 )
-Chave primaria: {sales_order_line_id}
-Chave estrangeira:
+Chave primária: {sales_order_line_id}
+Chaves estrangeiras:
 {sales_order_id} → SalesOrder {sales_order_id}
-{product_id} → Product {product_id}
+{product_variant_id} → ProductVariant {product_variant_id}
 {currency_id} → Currency {currency_id}
+
+---
 
 `SalesTerritory`(
     sales_territory_id,
     name,
     region
 )
-Chave primaria: {sales_territory_id}
+Chave primária: {sales_territory_id}
+
+---
 
 `Currency`(
     currency_id,
     code,
     name
 )
-Chave primaria: {currency_id}
+Chave primária: {currency_id}
 
-#---------------------------------------------------------------------------------
+---
+
+##---------------------------------------------------------------------------------
 #                                   CUSTOMERS
-#---------------------------------------------------------------------------------
+##---------------------------------------------------------------------------------
 
 `Customer`(
     customer_id,
@@ -608,10 +646,11 @@ Chave primaria: {currency_id}
     occupation,
     number_cars_owned,
     date_first_purchase,
-    password_hash,
     nif
 )
-Chave primaria: {customer_id}
+Chave primária: {customer_id}
+
+---
 
 `CustomerAddress`(
     customer_address_id,
@@ -623,11 +662,13 @@ Chave primaria: {customer_id}
     country_id,
     phone
 )
-Chave primaria: {customer_address_id}
-Chave estrangeira:
+Chave primária: {customer_address_id}
+Chaves estrangeiras:
 {customer_id} → Customer {customer_id}
 {state_province_id} → StateProvince {state_province_id}
 {country_id} → CountryRegion {country_id}
+
+---
 
 `StateProvince`(
     state_province_id,
@@ -635,16 +676,24 @@ Chave estrangeira:
     name,
     country_id
 )
-Chave primaria: {state_province_id}
+Chave primária: {state_province_id}
 Chave estrangeira:
 {country_id} → CountryRegion {country_id}
+
+---
 
 `CountryRegion`(
     country_id,
     code,
     name
 )
-Chave primaria: {country_id}
+Chave primária: {country_id}
+
+---
+
+##---------------------------------------------------------------------------------
+#                                   APP USERS
+##---------------------------------------------------------------------------------
 
 `AppUser`(
     app_user_id,
@@ -655,9 +704,11 @@ Chave primaria: {country_id}
     created_at,
     last_login
 )
-Chave primaria: {app_user_id}
+Chave primária: {app_user_id}
 Chave estrangeira:
 {customer_id} → Customer {customer_id}
+
+---
 
 `PasswordRecoveryQuestion`(
     question_id,
@@ -665,9 +716,11 @@ Chave estrangeira:
     question_text,
     answer_hash
 )
-Chave primaria: {question_id}
+Chave primária: {question_id}
 Chave estrangeira:
 {app_user_id} → AppUser {app_user_id}
+
+---
 
 `SentEmails`(
     sent_email_id,
@@ -676,4 +729,10 @@ Chave estrangeira:
     message,
     sent_at
 )
-Chave primaria: {sent_email_id}
+Chave primária: {sent_email_id}
+
+
+
+## Migration 
+
+Notes: Removed category_id from product sub category

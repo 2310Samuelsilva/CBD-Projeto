@@ -11,10 +11,10 @@ GO
 --                                   PRODUCTS
 --=================================================================================
 
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductColor')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductColors')
 BEGIN
-    CREATE TABLE ProductColor (
-        color_id INT IDENTITY(1,1) CONSTRAINT PK_ProductColor PRIMARY KEY,
+    CREATE TABLE ProductColors (
+        color_id INT IDENTITY(1,1) CONSTRAINT PK_ProductColors PRIMARY KEY,
         name NVARCHAR(50) NOT NULL
     );
 END
@@ -33,10 +33,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductSubcategory')
 BEGIN
     CREATE TABLE ProductSubcategory (
         subcategory_id INT IDENTITY(1,1) CONSTRAINT PK_ProductSubcategory PRIMARY KEY,
-        category_id INT NOT NULL,
         name NVARCHAR(100) NOT NULL,
-        CONSTRAINT FK_ProductSubcategory_ProductCategory FOREIGN KEY (category_id)
-            REFERENCES ProductCategory(category_id)
     );
 END
 GO
@@ -80,49 +77,58 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'UnitOfMeasure')
 BEGIN
     CREATE TABLE UnitOfMeasure (
-        code NVARCHAR(10) CONSTRAINT PK_UnitOfMeasure PRIMARY KEY,
+        unit_measure_code NVARCHAR(10) CONSTRAINT PK_UnitOfMeasure PRIMARY KEY,
         name NVARCHAR(50) NOT NULL,
         conversion_to_base DECIMAL(10,6)
     );
 END
 GO
 
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Product')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductMaster')
 BEGIN
-    CREATE TABLE Product (
-        product_id INT IDENTITY(1,1) CONSTRAINT PK_Product PRIMARY KEY,
+    CREATE TABLE ProductMaster (
+        product_master_id INT IDENTITY(1,1) CONSTRAINT PK_ProductMaster PRIMARY KEY,
         product_name NVARCHAR(255) NOT NULL,
-        model NVARCHAR(255) NOT NULL,
-        color_id INT,
-        category_id INT NOT NULL,
+        model NVARCHAR(255),
+        category_id INT,
         subcategory_id INT,
         product_line_id INT,
         class_id INT,
         style_id INT,
-        size NVARCHAR(10),
-        size_range_id INT,
-        size_unit_code NVARCHAR(10),
-        weight_unit_code NVARCHAR(10),
-        weight DECIMAL(10,2),
-        finished_goods_flag BIT,
-        standard_cost DECIMAL(10,2),
-        list_price DECIMAL(10,2),
-        dealer_price DECIMAL(10,2),
-        days_to_manufacture INT,
-        description NVARCHAR(1000),
-        CONSTRAINT FK_Product_ProductColor FOREIGN KEY (color_id) REFERENCES ProductColor(color_id),
-        CONSTRAINT FK_Product_ProductCategory FOREIGN KEY (category_id) REFERENCES ProductCategory(category_id),
-        CONSTRAINT FK_Product_ProductSubcategory FOREIGN KEY (subcategory_id) REFERENCES ProductSubcategory(subcategory_id),
-        CONSTRAINT FK_Product_ProductLine FOREIGN KEY (product_line_id) REFERENCES ProductLine(product_line_id),
-        CONSTRAINT FK_Product_ProductClass FOREIGN KEY (class_id) REFERENCES ProductClass(class_id),
-        CONSTRAINT FK_Product_ProductStyle FOREIGN KEY (style_id) REFERENCES ProductStyle(style_id),
-        CONSTRAINT FK_Product_ProductSizeRange FOREIGN KEY (size_range_id) REFERENCES ProductSizeRange(size_range_id),
-        CONSTRAINT FK_Product_SizeUnit FOREIGN KEY (size_unit_code) REFERENCES UnitOfMeasure(code),
-        CONSTRAINT FK_Product_WeightUnit FOREIGN KEY (weight_unit_code) REFERENCES UnitOfMeasure(code)
+        description NVARCHAR(MAX),
+        CONSTRAINT FK_ProductMaster_ProductCategory FOREIGN KEY (category_id) REFERENCES ProductCategory(category_id),
+        CONSTRAINT FK_ProductMaster_ProductSubcategory FOREIGN KEY (subcategory_id) REFERENCES ProductSubcategory(subcategory_id),
+        CONSTRAINT FK_ProductMaster_ProductLine FOREIGN KEY (product_line_id) REFERENCES ProductLine(product_line_id),
+        CONSTRAINT FK_ProductMaster_ProductClass FOREIGN KEY (class_id) REFERENCES ProductClass(class_id),
+        CONSTRAINT FK_ProductMaster_ProductStyle FOREIGN KEY (style_id) REFERENCES ProductStyle(style_id)
     );
 END
 GO
 
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductVariant')
+BEGIN
+    CREATE TABLE ProductVariant (
+        product_variant_id INT IDENTITY(1,1) CONSTRAINT PK_ProductVariant PRIMARY KEY,
+        product_master_id INT NOT NULL,
+        color_id INT,
+        size NVARCHAR(20),
+        size_range_id INT,
+        size_unit_measure_code NVARCHAR(10),
+        weight DECIMAL(10,2),
+        weight_unit_measure_code NVARCHAR(10),
+        finished_goods_flag BIT DEFAULT 0,
+        standard_cost DECIMAL(10,2),
+        list_price DECIMAL(10,2),
+        dealer_price DECIMAL(10,2),
+        days_to_manufacture INT,
+        CONSTRAINT FK_ProductVariant_ProductMaster FOREIGN KEY (product_master_id) REFERENCES ProductMaster(product_master_id),
+        CONSTRAINT FK_ProductVariant_ProductColors FOREIGN KEY (color_id) REFERENCES ProductColors(color_id),
+        CONSTRAINT FK_ProductVariant_ProductSizeRange FOREIGN KEY (size_range_id) REFERENCES ProductSizeRange(size_range_id),
+        CONSTRAINT FK_ProductVariant_SizeUnit FOREIGN KEY (size_unit_measure_code) REFERENCES UnitOfMeasure(unit_measure_code),
+        CONSTRAINT FK_ProductVariant_WeightUnit FOREIGN KEY (weight_unit_measure_code) REFERENCES UnitOfMeasure(unit_measure_code)
+    );
+END
+GO
 
 --=================================================================================
 --                                   CUSTOMER
@@ -168,7 +174,6 @@ BEGIN
         occupation NVARCHAR(50),
         number_cars_owned INT,
         date_first_purchase DATE,
-        password_hash NVARCHAR(255),
         nif NVARCHAR(20)
     );
 END
@@ -191,7 +196,6 @@ BEGIN
     );
 END
 GO
-
 
 --=================================================================================
 --                                   SALES
@@ -239,21 +243,19 @@ BEGIN
         sales_order_line_id INT IDENTITY(1,1) CONSTRAINT PK_SalesOrderLine PRIMARY KEY,
         sales_order_id INT NOT NULL,
         line_number INT,
-        product_id INT NOT NULL,
+        product_variant_id INT NOT NULL,
         currency_id INT,
         product_standard_cost DECIMAL(10,2),
         unit_price DECIMAL(10,2),
         quantity INT,
-        total_sales_amount AS (unit_price * quantity) PERSISTED,
         tax_amt DECIMAL(10,2),
         freight DECIMAL(10,2),
         CONSTRAINT FK_SalesOrderLine_SalesOrder FOREIGN KEY (sales_order_id) REFERENCES SalesOrder(sales_order_id),
-        CONSTRAINT FK_SalesOrderLine_Product FOREIGN KEY (product_id) REFERENCES Product(product_id),
+        CONSTRAINT FK_SalesOrderLine_ProductVariant FOREIGN KEY (product_variant_id) REFERENCES ProductVariant(product_variant_id),
         CONSTRAINT FK_SalesOrderLine_Currency FOREIGN KEY (currency_id) REFERENCES Currency(currency_id)
     );
 END
 GO
-
 
 --=================================================================================
 --                                   APP USERS
