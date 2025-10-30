@@ -11,3 +11,5 @@ SELECT
 FROM AdventureWorksLegacy.dbo.Products
 GROUP BY ModelName
 ORDER BY ModelName;
+
+

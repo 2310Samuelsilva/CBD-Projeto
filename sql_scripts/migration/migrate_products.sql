@@ -3,84 +3,66 @@
 -- Target: AdventureWorks
 -- Source: AdventureWorksLegacy
 --=================================================================================
--- This script assumes both databases exist on the same SQL Server instance.
--- Run this after creating schema/tables in AdventureWorks.
+-- This script migrates legacy product data into the new AdventureWorks schema.
+-- It assumes both databases exist on the same SQL Server instance.
+-- Run after all schema and helper functions (TrimSpaces, CleanProductName) are created.
 --=================================================================================
 
 USE AdventureWorks;
-
---=================================================================================
--- FUNCTION: dbo.TrimSpaces
--- Purpose: Remove leading and trailing spaces from an NVARCHAR string
---=================================================================================
-IF OBJECT_ID('dbo.TrimSpaces', 'FN') IS NOT NULL
-    DROP FUNCTION dbo.TrimSpaces;
-GO
-CREATE FUNCTION dbo.TrimSpaces (@Input NVARCHAR(MAX))
-RETURNS NVARCHAR(MAX)
-AS
-BEGIN
-    -- Check for NULL input
-    IF @Input IS NULL
-        RETURN NULL;
-
-    -- Trim spaces
-    RETURN LTRIM(RTRIM(@Input));
-END;
-GO
-
+-- GO
 
 
 --=================================================================================
--- STEP 1: Migrate Product Categories
+-- STEP 1: MIGRATE PRODUCT CATEGORIES
 --=================================================================================
--- Plan:
--- 1. Select distinct categories from the legacy Products table.
--- 2. Insert them into the new ProductCategory table (if not already present).
+-- 1. Extract distinct category names from legacy data.
+-- 2. Trim and insert if not already present.
+--=================================================================================
 INSERT INTO AdventureWorks.dbo.ProductCategory (name)
-SELECT DISTINCT L.EnglishProductCategoryName
+SELECT DISTINCT dbo.TrimSpaces(L.EnglishProductCategoryName)
 FROM AdventureWorksLegacy.dbo.Products AS L
 WHERE L.EnglishProductCategoryName IS NOT NULL
   AND NOT EXISTS (
       SELECT 1
       FROM AdventureWorks.dbo.ProductCategory AS C
-      WHERE C.name = L.EnglishProductCategoryName
+      WHERE dbo.TrimSpaces(C.name) = dbo.TrimSpaces(L.EnglishProductCategoryName)
   );
-GO
+-- GO
+
 
 --=================================================================================
--- STEP 2: Migrate Product Subcategories
+-- STEP 2: MIGRATE PRODUCT SUBCATEGORIES
 --=================================================================================
--- Plan:
--- 1. Select distinct subcategories from the legacy ProductSubCategory table.
--- 2. Insert them into the new ProductSubcategory table (if not already present).
+-- 1. Pull from legacy ProductSubCategory table.
+-- 2. Avoid duplicates by trimmed name.
+--=================================================================================
 INSERT INTO AdventureWorks.dbo.ProductSubcategory (name)
-SELECT DISTINCT L.EnglishProductSubcategoryName
+SELECT DISTINCT dbo.TrimSpaces(L.EnglishProductSubcategoryName)
 FROM AdventureWorksLegacy.dbo.ProductSubCategory AS L
 WHERE L.EnglishProductSubcategoryName IS NOT NULL
   AND NOT EXISTS (
       SELECT 1
       FROM AdventureWorks.dbo.ProductSubcategory AS SC
-      WHERE SC.name = L.EnglishProductSubcategoryName
+      WHERE dbo.TrimSpaces(SC.name) = dbo.TrimSpaces(L.EnglishProductSubcategoryName)
   );
-GO
+-- GO
+
 
 --=================================================================================
--- STEP 3: Migrate Weight Units of Measure
+-- STEP 3: MIGRATE WEIGHT UNITS OF MEASURE
 --=================================================================================
--- Plan:
--- 1. Extract distinct WeightUnitMeasureCode from legacy Products.
--- 2. Map to new UnitOfMeasure codes and conversion factors.
--- 3. Insert only if not already present.
--- Base Unit: Kilogram (KG)
+-- 1. Map distinct WeightUnitMeasureCode values to base units.
+-- 2. Define conversion factors.
+-- 3. Insert only new unit codes.
+--=================================================================================
 ;WITH WeightUnitMap AS (
     SELECT DISTINCT 
-        L.WeightUnitMeasureCode AS legacy_code,
+        dbo.TrimSpaces(L.WeightUnitMeasureCode) AS legacy_code,
         CASE 
             WHEN L.WeightUnitMeasureCode = 'LB' THEN 'LB'
             WHEN L.WeightUnitMeasureCode = 'G'  THEN 'G'
             WHEN L.WeightUnitMeasureCode = ''   THEN 'KG'
-            ELSE 'KG' -- default/fallback
+            ELSE 'KG'
         END AS unit_measure_code,
         CASE 
             WHEN L.WeightUnitMeasureCode = 'LB' THEN 'Pounds'
@@ -102,31 +84,28 @@ WHERE NOT EXISTS (
     FROM AdventureWorks.dbo.UnitOfMeasure AS U 
     WHERE U.unit_measure_code = W.unit_measure_code
 );
-GO
+-- GO
+
 
 --=================================================================================
--- STEP 4: Migrate Size Units of Measure (with default)
+-- STEP 4: MIGRATE SIZE UNITS OF MEASURE
 --=================================================================================
--- Plan:
--- 1. Extract distinct SizeUnitMeasureCode values from legacy Products table.
--- 2. Map recognized codes to base units; default unknown/empty to 'NA'.
--- 3. Insert into UnitOfMeasure only if not already present.
-
+-- 1. Identify size unit codes from legacy data.
+-- 2. Default blanks to 'NA' (Not Applicable).
+-- 3. Insert new units if missing.
+--=================================================================================
 ;WITH SizeUnitMap AS (
     SELECT DISTINCT  
-        L.SizeUnitMeasureCode AS legacy_code,
+        dbo.TrimSpaces(L.SizeUnitMeasureCode) AS legacy_code,
         CASE 
             WHEN L.SizeUnitMeasureCode IS NULL OR L.SizeUnitMeasureCode = '' THEN 'NA'
             ELSE L.SizeUnitMeasureCode
         END AS unit_measure_code,
         CASE 
             WHEN L.SizeUnitMeasureCode IS NULL OR L.SizeUnitMeasureCode = '' THEN 'NOT DEFINED'
-            ELSE 'Centimeters' -- all known codes mapped to CM
+            ELSE 'Centimeters'
         END AS name,
-        CASE 
-            WHEN L.SizeUnitMeasureCode IS NULL OR L.SizeUnitMeasureCode = '' THEN 1.0
-            ELSE 1.0 -- conversion factor to base unit (CM)
-        END AS conversion_to_base
+        1.0 AS conversion_to_base
     FROM AdventureWorksLegacy.dbo.Products AS L
 )
 INSERT INTO dbo.UnitOfMeasure (unit_measure_code, name, conversion_to_base)
@@ -137,104 +116,108 @@ WHERE NOT EXISTS (
     FROM dbo.UnitOfMeasure AS U 
     WHERE U.unit_measure_code = S.unit_measure_code
 );
-GO
+-- GO
+
 
 --=================================================================================
--- STEP 5: Migrate Product Colors
+-- STEP 5: MIGRATE PRODUCT COLORS
 --=================================================================================
--- Plan:
--- 1. Select distinct colors from the legacy Products table.
--- 2. Insert them into the new ProductColor table (if not already present).
+-- 1. Extract distinct color names from legacy Products.
+-- 2. Trim and insert new ones only.
+--=================================================================================
 INSERT INTO AdventureWorks.dbo.ProductColor (name)
-SELECT DISTINCT L.Color
+SELECT DISTINCT dbo.TrimSpaces(L.Color)
 FROM AdventureWorksLegacy.dbo.Products AS L
 WHERE L.Color IS NOT NULL
   AND NOT EXISTS (
       SELECT 1
       FROM AdventureWorks.dbo.ProductColor AS C
-      WHERE C.name = L.Color
+      WHERE dbo.TrimSpaces(C.name) = dbo.TrimSpaces(L.Color)
   );
-GO
+-- GO
+
 
 --=================================================================================
--- STEP 6: Migrate Product Size Ranges
+-- STEP 6: MIGRATE PRODUCT SIZE RANGES
 --=================================================================================
--- Plan:
--- 1. Select distinct size ranges from legacy Products table
--- 2. Insert them into ProductSizeRange table
+-- 1. Load distinct size range values.
+-- 2. Insert trimmed names if not already present.
+--=================================================================================
 INSERT INTO AdventureWorks.dbo.ProductSizeRange (name)
-SELECT DISTINCT LTRIM(RTRIM(SizeRange))
+SELECT DISTINCT dbo.TrimSpaces(L.SizeRange)
 FROM AdventureWorksLegacy.dbo.Products AS L
-WHERE LTRIM(RTRIM(SizeRange)) <> ''
+WHERE dbo.TrimSpaces(L.SizeRange) <> ''
   AND NOT EXISTS (
       SELECT 1
       FROM AdventureWorks.dbo.ProductSizeRange AS SR
-      WHERE LTRIM(RTRIM(SR.name)) = LTRIM(RTRIM(L.SizeRange))
+      WHERE dbo.TrimSpaces(SR.name) = dbo.TrimSpaces(L.SizeRange)
   );
-GO
+-- GO
+
 
 --=================================================================================
--- STEP 7: Migrate Product Lines
+-- STEP 7: MIGRATE PRODUCT LINES
 --=================================================================================
--- Plan:
--- 1. Select distinct product lines from legacy Products table
--- 2. Insert them into ProductLine table
+-- 1. Extract distinct ProductLine names.
+-- 2. Insert if missing.
+--=================================================================================
 INSERT INTO AdventureWorks.dbo.ProductLine (name)
-SELECT DISTINCT LTRIM(RTRIM(ProductLine))
+SELECT DISTINCT dbo.TrimSpaces(L.ProductLine)
 FROM AdventureWorksLegacy.dbo.Products AS L
-WHERE LTRIM(RTRIM(ProductLine)) <> ''
+WHERE dbo.TrimSpaces(L.ProductLine) <> ''
   AND NOT EXISTS (
       SELECT 1
       FROM AdventureWorks.dbo.ProductLine AS PL
-      WHERE LTRIM(RTRIM(PL.name)) = LTRIM(RTRIM(L.ProductLine))
+      WHERE dbo.TrimSpaces(PL.name) = dbo.TrimSpaces(L.ProductLine)
   );
-GO
+-- GO
+
 
 --=================================================================================
--- STEP 8: Migrate Product Classes
+-- STEP 8: MIGRATE PRODUCT CLASSES
 --=================================================================================
--- Plan:
--- 1. Select distinct product classes from legacy Products table
--- 2. Insert them into ProductClass table
+-- 1. Extract distinct Class values.
+-- 2. Insert if missing.
+--=================================================================================
 INSERT INTO AdventureWorks.dbo.ProductClass (name)
-SELECT DISTINCT LTRIM(RTRIM(Class))
+SELECT DISTINCT dbo.TrimSpaces(L.Class)
 FROM AdventureWorksLegacy.dbo.Products AS L
-WHERE LTRIM(RTRIM(Class)) <> ''
+WHERE dbo.TrimSpaces(L.Class) <> ''
   AND NOT EXISTS (
       SELECT 1
       FROM AdventureWorks.dbo.ProductClass AS PC
-      WHERE LTRIM(RTRIM(PC.name)) = LTRIM(RTRIM(L.Class))
+      WHERE dbo.TrimSpaces(PC.name) = dbo.TrimSpaces(L.Class)
   );
+-- GO
+
 
 --=================================================================================
--- STEP 9: Migrate Product Styles
+-- STEP 9: MIGRATE PRODUCT STYLES
 --=================================================================================
--- Plan:
--- 1. Select distinct product styles from legacy Products table
--- 2. Insert them into ProductStyle table
+-- 1. Extract distinct Style values.
+-- 2. Insert if missing.
+--=================================================================================
 INSERT INTO AdventureWorks.dbo.ProductStyle (name)
-SELECT DISTINCT LTRIM(RTRIM(Style))
+SELECT DISTINCT dbo.TrimSpaces(L.Style)
 FROM AdventureWorksLegacy.dbo.Products AS L
-WHERE LTRIM(RTRIM(Style)) <> ''
+WHERE dbo.TrimSpaces(L.Style) <> ''
   AND NOT EXISTS (
       SELECT 1
       FROM AdventureWorks.dbo.ProductStyle AS PS
-      WHERE LTRIM(RTRIM(PS.name)) = LTRIM(RTRIM(L.Style))
+      WHERE dbo.TrimSpaces(PS.name) = dbo.TrimSpaces(L.Style)
   );
-GO
+-- GO
 
 
 --=================================================================================
--- STEP 10: Migrate Product Masters (model_name as source of truth)
+-- STEP 10: MIGRATE PRODUCT MASTERS
 --=================================================================================
--- Plan:
--- 1. One master product per ModelName.
--- 2. Map category, subcategory, product line, class if available.
--- 3. Insert into ProductMaster table.
-
+-- 1. Each unique ModelName becomes one ProductMaster record.
+-- 2. Link category, subcategory, line, and class by trimmed name.
+-- 3. Insert only new model names.
+--=================================================================================
 INSERT INTO AdventureWorks.dbo.ProductMaster
 (
-    --product_name,
     model,
     category_id,
     subcategory_id,
@@ -243,18 +226,19 @@ INSERT INTO AdventureWorks.dbo.ProductMaster
     description
 )
 SELECT DISTINCT
-    --dbo.TrimSpaces(L.EnglishProductName) AS product_name,
     dbo.TrimSpaces(L.ModelName) AS model,
     C.category_id,
-    SC.subcategory_id,
+    SC_new.subcategory_id,
     PL.product_line_id,
     PC.class_id,
     dbo.TrimSpaces(L.EnglishDescription) AS description
 FROM AdventureWorksLegacy.dbo.Products AS L
 LEFT JOIN AdventureWorks.dbo.ProductCategory AS C
     ON dbo.TrimSpaces(L.EnglishProductCategoryName) = dbo.TrimSpaces(C.name)
-LEFT JOIN AdventureWorks.dbo.ProductSubcategory AS SC
-    ON dbo.TrimSpaces(L.EnglishProductSubcategoryName) = dbo.TrimSpaces(SC.name)
+LEFT JOIN AdventureWorksLegacy.dbo.ProductSubCategory AS SC_legacy
+    ON L.ProductSubcategoryKey = SC_legacy.ProductSubcategoryKey
+LEFT JOIN AdventureWorks.dbo.ProductSubcategory AS SC_new
+    ON dbo.TrimSpaces(SC_legacy.EnglishProductSubcategoryName) = dbo.TrimSpaces(SC_new.name)
 LEFT JOIN AdventureWorks.dbo.ProductLine AS PL
     ON dbo.TrimSpaces(L.ProductLine) = dbo.TrimSpaces(PL.name)
 LEFT JOIN AdventureWorks.dbo.ProductClass AS PC
@@ -262,5 +246,65 @@ LEFT JOIN AdventureWorks.dbo.ProductClass AS PC
 WHERE NOT EXISTS (
     SELECT 1
     FROM AdventureWorks.dbo.ProductMaster AS PM
-    WHERE PM.model = dbo.TrimSpaces(L.ModelName)
+    WHERE dbo.TrimSpaces(PM.model) = dbo.TrimSpaces(L.ModelName)
 );
+-- GO
+
+
+--=================================================================================
+-- STEP 11: MIGRATE PRODUCT VARIANTS
+--=================================================================================
+-- 1. Match legacy records to ProductMaster via model.
+-- 2. Map all related lookups (color, style, size, range, weight units).
+-- 3. Skip duplicate variant names per model.
+--=================================================================================
+INSERT INTO AdventureWorks.dbo.ProductVariant
+(
+    product_master_id,
+    variant_name,
+    color_id,
+    style_id,
+    size,
+    size_range_id,
+    size_unit_measure_code,
+    weight,
+    weight_unit_measure_code,
+    finished_goods_flag,
+    standard_cost,
+    list_price,
+    dealer_price,
+    days_to_manufacture,
+    safety_stock_level
+)
+SELECT
+    PM.product_master_id,
+    dbo.CleanProductName(L.EnglishProductName) AS variant_name,
+    ISNULL(PC.color_id, (SELECT TOP 1 color_id FROM AdventureWorks.dbo.ProductColor WHERE name = 'N/A')) AS color_id,
+    ISNULL(PS.style_id, (SELECT TOP 1 style_id FROM AdventureWorks.dbo.ProductStyle WHERE name = 'N/A')) AS style_id,
+    dbo.TrimSpaces(L.Size) AS size,
+    ISNULL(PSR.size_range_id, (SELECT TOP 1 size_range_id FROM AdventureWorks.dbo.ProductSizeRange WHERE name = 'N/A')) AS size_range_id,
+    ISNULL(NULLIF(dbo.TrimSpaces(L.SizeUnitMeasureCode), ''), 'NA') AS size_unit_measure_code,
+    L.Weight,
+    ISNULL(NULLIF(dbo.TrimSpaces(L.WeightUnitMeasureCode), ''), 'NA') AS weight_unit_measure_code,
+    L.FinishedGoodsFlag,
+    L.StandardCost,
+    L.ListPrice,
+    L.DealerPrice,
+    L.DaysToManufacture,
+    L.SafetyStockLevel
+FROM AdventureWorksLegacy.dbo.Products AS L
+INNER JOIN AdventureWorks.dbo.ProductMaster AS PM
+    ON dbo.TrimSpaces(L.ModelName) = dbo.TrimSpaces(PM.model)
+LEFT JOIN AdventureWorks.dbo.ProductColor AS PC
+    ON dbo.TrimSpaces(L.Color) = dbo.TrimSpaces(PC.name)
+LEFT JOIN AdventureWorks.dbo.ProductStyle AS PS
+    ON dbo.TrimSpaces(L.Style) = dbo.TrimSpaces(PS.name)
+LEFT JOIN AdventureWorks.dbo.ProductSizeRange AS PSR
+    ON dbo.TrimSpaces(L.SizeRange) = dbo.TrimSpaces(PSR.name)
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM AdventureWorks.dbo.ProductVariant AS PV
+    WHERE PV.product_master_id = PM.product_master_id
+      AND dbo.TrimSpaces(PV.variant_name) = dbo.CleanProductName(L.EnglishProductName)
+);
+-- GO

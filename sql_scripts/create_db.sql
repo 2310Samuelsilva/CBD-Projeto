@@ -93,7 +93,7 @@ IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductMaster')
 BEGIN
     CREATE TABLE dbo.ProductMaster (
         product_master_id INT IDENTITY(1,1) CONSTRAINT PK_ProductMaster PRIMARY KEY,
-        product_name NVARCHAR(255)  NOT NULL,
+        product_name NVARCHAR(255),
         model NVARCHAR(255) ,
         category_id INT,
         subcategory_id INT,
@@ -126,6 +126,7 @@ BEGIN
         list_price DECIMAL(10,2),
         dealer_price DECIMAL(10,2),
         days_to_manufacture INT,
+        safety_stock_level INT,
         CONSTRAINT FK_ProductVariant_ProductMaster FOREIGN KEY (product_master_id) REFERENCES dbo.ProductMaster(product_master_id),
         CONSTRAINT FK_ProductVariant_ProductColor FOREIGN KEY (color_id) REFERENCES dbo.ProductColor(color_id),
         CONSTRAINT FK_ProductMaster_ProductStyle FOREIGN KEY (style_id) REFERENCES dbo.ProductStyle(style_id),
