@@ -1,8 +1,13 @@
+
+--=================================================================================
+-- CREATE DATABASE (WITH COLLATION)
+--=================================================================================
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'AdventureWorks')
 BEGIN
-    CREATE DATABASE AdventureWorks;
+    CREATE DATABASE AdventureWorks COLLATE Latin1_General_CI_AS;;
 END
 GO
+
 
 USE AdventureWorks;
 GO
@@ -11,74 +16,74 @@ GO
 --                                   PRODUCTS
 --=================================================================================
 
-IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductColors')
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductColor')
 BEGIN
-    CREATE TABLE ProductColors (
-        color_id INT IDENTITY(1,1) CONSTRAINT PK_ProductColors PRIMARY KEY,
-        name NVARCHAR(50) NOT NULL
+    CREATE TABLE dbo.ProductColor (
+        color_id INT IDENTITY(1,1) CONSTRAINT PK_ProductColor PRIMARY KEY,
+        name NVARCHAR(50)  NOT NULL
     );
 END
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductCategory')
 BEGIN
-    CREATE TABLE ProductCategory (
+    CREATE TABLE dbo.ProductCategory (
         category_id INT IDENTITY(1,1) CONSTRAINT PK_ProductCategory PRIMARY KEY,
-        name NVARCHAR(100) NOT NULL
+        name NVARCHAR(100)  NOT NULL
     );
 END
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductSubcategory')
 BEGIN
-    CREATE TABLE ProductSubcategory (
+    CREATE TABLE dbo.ProductSubcategory (
         subcategory_id INT IDENTITY(1,1) CONSTRAINT PK_ProductSubcategory PRIMARY KEY,
-        name NVARCHAR(100) NOT NULL,
+        name NVARCHAR(100)  NOT NULL
     );
 END
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductLine')
 BEGIN
-    CREATE TABLE ProductLine (
+    CREATE TABLE dbo.ProductLine (
         product_line_id INT IDENTITY(1,1) CONSTRAINT PK_ProductLine PRIMARY KEY,
-        name NVARCHAR(50) NOT NULL
+        name NVARCHAR(50)  NOT NULL
     );
 END
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductClass')
 BEGIN
-    CREATE TABLE ProductClass (
+    CREATE TABLE dbo.ProductClass (
         class_id INT IDENTITY(1,1) CONSTRAINT PK_ProductClass PRIMARY KEY,
-        name NVARCHAR(50) NOT NULL
+        name NVARCHAR(50)  NOT NULL
     );
 END
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductStyle')
 BEGIN
-    CREATE TABLE ProductStyle (
+    CREATE TABLE dbo.ProductStyle (
         style_id INT IDENTITY(1,1) CONSTRAINT PK_ProductStyle PRIMARY KEY,
-        name NVARCHAR(50) NOT NULL
+        name NVARCHAR(50)  NOT NULL
     );
 END
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductSizeRange')
 BEGIN
-    CREATE TABLE ProductSizeRange (
+    CREATE TABLE dbo.ProductSizeRange (
         size_range_id INT IDENTITY(1,1) CONSTRAINT PK_ProductSizeRange PRIMARY KEY,
-        name NVARCHAR(50) NOT NULL
+        name NVARCHAR(50)  NOT NULL
     );
 END
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'UnitOfMeasure')
 BEGIN
-    CREATE TABLE UnitOfMeasure (
-        unit_measure_code NVARCHAR(10) CONSTRAINT PK_UnitOfMeasure PRIMARY KEY,
-        name NVARCHAR(50) NOT NULL,
+    CREATE TABLE dbo.UnitOfMeasure (
+        unit_measure_code NVARCHAR(10)  CONSTRAINT PK_UnitOfMeasure PRIMARY KEY,
+        name NVARCHAR(50)  NOT NULL,
         conversion_to_base DECIMAL(10,6)
     );
 END
@@ -86,46 +91,47 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductMaster')
 BEGIN
-    CREATE TABLE ProductMaster (
+    CREATE TABLE dbo.ProductMaster (
         product_master_id INT IDENTITY(1,1) CONSTRAINT PK_ProductMaster PRIMARY KEY,
-        product_name NVARCHAR(255) NOT NULL,
-        model NVARCHAR(255),
+        product_name NVARCHAR(255)  NOT NULL,
+        model NVARCHAR(255) ,
         category_id INT,
         subcategory_id INT,
         product_line_id INT,
         class_id INT,
-        style_id INT,
-        description NVARCHAR(MAX),
-        CONSTRAINT FK_ProductMaster_ProductCategory FOREIGN KEY (category_id) REFERENCES ProductCategory(category_id),
-        CONSTRAINT FK_ProductMaster_ProductSubcategory FOREIGN KEY (subcategory_id) REFERENCES ProductSubcategory(subcategory_id),
-        CONSTRAINT FK_ProductMaster_ProductLine FOREIGN KEY (product_line_id) REFERENCES ProductLine(product_line_id),
-        CONSTRAINT FK_ProductMaster_ProductClass FOREIGN KEY (class_id) REFERENCES ProductClass(class_id),
-        CONSTRAINT FK_ProductMaster_ProductStyle FOREIGN KEY (style_id) REFERENCES ProductStyle(style_id)
+        description NVARCHAR(MAX) ,
+        CONSTRAINT FK_ProductMaster_ProductCategory FOREIGN KEY (category_id) REFERENCES dbo.ProductCategory(category_id),
+        CONSTRAINT FK_ProductMaster_ProductSubcategory FOREIGN KEY (subcategory_id) REFERENCES dbo.ProductSubcategory(subcategory_id),
+        CONSTRAINT FK_ProductMaster_ProductLine FOREIGN KEY (product_line_id) REFERENCES dbo.ProductLine(product_line_id),
+        CONSTRAINT FK_ProductMaster_ProductClass FOREIGN KEY (class_id) REFERENCES dbo.ProductClass(class_id)
     );
 END
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductVariant')
 BEGIN
-    CREATE TABLE ProductVariant (
+    CREATE TABLE dbo.ProductVariant (
         product_variant_id INT IDENTITY(1,1) CONSTRAINT PK_ProductVariant PRIMARY KEY,
         product_master_id INT NOT NULL,
+        variant_name NVARCHAR(255)  NOT NULL,
         color_id INT,
-        size NVARCHAR(20),
+        style_id INT,
+        size NVARCHAR(20) ,
         size_range_id INT,
-        size_unit_measure_code NVARCHAR(10),
+        size_unit_measure_code NVARCHAR(10) ,
         weight DECIMAL(10,2),
-        weight_unit_measure_code NVARCHAR(10),
+        weight_unit_measure_code NVARCHAR(10) ,
         finished_goods_flag BIT DEFAULT 0,
         standard_cost DECIMAL(10,2),
         list_price DECIMAL(10,2),
         dealer_price DECIMAL(10,2),
         days_to_manufacture INT,
-        CONSTRAINT FK_ProductVariant_ProductMaster FOREIGN KEY (product_master_id) REFERENCES ProductMaster(product_master_id),
-        CONSTRAINT FK_ProductVariant_ProductColors FOREIGN KEY (color_id) REFERENCES ProductColors(color_id),
-        CONSTRAINT FK_ProductVariant_ProductSizeRange FOREIGN KEY (size_range_id) REFERENCES ProductSizeRange(size_range_id),
-        CONSTRAINT FK_ProductVariant_SizeUnit FOREIGN KEY (size_unit_measure_code) REFERENCES UnitOfMeasure(unit_measure_code),
-        CONSTRAINT FK_ProductVariant_WeightUnit FOREIGN KEY (weight_unit_measure_code) REFERENCES UnitOfMeasure(unit_measure_code)
+        CONSTRAINT FK_ProductVariant_ProductMaster FOREIGN KEY (product_master_id) REFERENCES dbo.ProductMaster(product_master_id),
+        CONSTRAINT FK_ProductVariant_ProductColor FOREIGN KEY (color_id) REFERENCES dbo.ProductColor(color_id),
+        CONSTRAINT FK_ProductMaster_ProductStyle FOREIGN KEY (style_id) REFERENCES dbo.ProductStyle(style_id),
+        CONSTRAINT FK_ProductVariant_ProductSizeRange FOREIGN KEY (size_range_id) REFERENCES dbo.ProductSizeRange(size_range_id),
+        CONSTRAINT FK_ProductVariant_SizeUnit FOREIGN KEY (size_unit_measure_code) REFERENCES dbo.UnitOfMeasure(unit_measure_code),
+        CONSTRAINT FK_ProductVariant_WeightUnit FOREIGN KEY (weight_unit_measure_code) REFERENCES dbo.UnitOfMeasure(unit_measure_code)
     );
 END
 GO
