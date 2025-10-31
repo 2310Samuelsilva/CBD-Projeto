@@ -210,10 +210,12 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'SalesTerritory')
 BEGIN
-    CREATE TABLE SalesTerritory (
+    CREATE TABLE dbo.SalesTerritory (
         sales_territory_id INT IDENTITY(1,1) CONSTRAINT PK_SalesTerritory PRIMARY KEY,
-        name NVARCHAR(100),
-        region NVARCHAR(100)
+        region NVARCHAR(100) NOT NULL,
+        country_region_id INT NOT NULL,
+        territory_group NVARCHAR(100) NULL,
+        CONSTRAINT FK_SalesTerritory_Country FOREIGN KEY (country_region_id) REFERENCES dbo.CountryRegion(country_id)
     );
 END
 GO

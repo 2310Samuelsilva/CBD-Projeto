@@ -278,20 +278,30 @@ INSERT INTO AdventureWorks.dbo.ProductVariant
 )
 SELECT
     PM.product_master_id,
-    dbo.CleanProductName(L.EnglishProductName) AS variant_name,
+    L.EnglishProductName AS variant_name,
+
     ISNULL(PC.color_id, (SELECT TOP 1 color_id FROM AdventureWorks.dbo.ProductColor WHERE name = 'N/A')) AS color_id,
     ISNULL(PS.style_id, (SELECT TOP 1 style_id FROM AdventureWorks.dbo.ProductStyle WHERE name = 'N/A')) AS style_id,
+
     dbo.TrimSpaces(L.Size) AS size,
     ISNULL(PSR.size_range_id, (SELECT TOP 1 size_range_id FROM AdventureWorks.dbo.ProductSizeRange WHERE name = 'N/A')) AS size_range_id,
     ISNULL(NULLIF(dbo.TrimSpaces(L.SizeUnitMeasureCode), ''), 'NA') AS size_unit_measure_code,
-    L.Weight,
+
+    -- Convert weight safely
+    TRY_CONVERT(DECIMAL(18,4), NULLIF(L.Weight, '')) AS weight,
+
     ISNULL(NULLIF(dbo.TrimSpaces(L.WeightUnitMeasureCode), ''), 'NA') AS weight_unit_measure_code,
+
     L.FinishedGoodsFlag,
-    L.StandardCost,
-    L.ListPrice,
-    L.DealerPrice,
-    L.DaysToManufacture,
-    L.SafetyStockLevel
+
+    -- Convert monetary/numeric fields safely
+    TRY_CONVERT(DECIMAL(18,4), NULLIF(L.StandardCost, '')) AS standard_cost,
+    TRY_CONVERT(DECIMAL(18,4), NULLIF(L.ListPrice, '')) AS list_price,
+    TRY_CONVERT(DECIMAL(18,4), NULLIF(L.DealerPrice, '')) AS dealer_price,
+
+    TRY_CONVERT(INT, NULLIF(L.DaysToManufacture, '')) AS days_to_manufacture,
+    TRY_CONVERT(INT, NULLIF(L.SafetyStockLevel, '')) AS safety_stock_level
+
 FROM AdventureWorksLegacy.dbo.Products AS L
 INNER JOIN AdventureWorks.dbo.ProductMaster AS PM
     ON dbo.TrimSpaces(L.ModelName) = dbo.TrimSpaces(PM.model)
