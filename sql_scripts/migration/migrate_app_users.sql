@@ -1,3 +1,6 @@
+use AdventureWorks
+GO
+
 --=================================================================================
 -- STEP 1: MIGRATE APP USERS
 --=================================================================================
@@ -19,7 +22,7 @@ INSERT INTO dbo.AppUser (
 )
 SELECT
     C.customer_id,
-    dbo.TrimSpaces(C.EmailAddress),
+    dbo.TrimSpaces(C.email_address),
     L.Password,
     1,
     GETDATE()
