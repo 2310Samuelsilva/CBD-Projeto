@@ -4,6 +4,8 @@ Plano de trabalho para projecto CBD
 
 
 
+
+
 # Ideias, questoes, migraçao
 
 1. Normalizar medidas
@@ -36,6 +38,12 @@ TotalSalesAmount (possivelmente preco total para esse produto? a venda nao inclu
 Password: Utilizar um algoritmo irreversivel
 NIF: Enciptar, como?
 Perguntas e respostas para recuperar passord: Utilizar HASH256 possibilidat recuperar.
+
+
+
+Encriptar: https://www.geeksforgeeks.org/sql/sql-data-encryption/
+Hash: https://blog.sqlauthority.com/2023/10/20/sql-server-best-practices-for-securely-storing-passwords/
+
 
 
 # Conjuntos de Entidades
@@ -722,3 +730,5 @@ Migração Sales:
 SALES ORDER LINES
 - Falha.. Estava a inserir 800k+ records (apenas existem 60k linhas de vendas).. isto porque o query nao faz mapeamento entre novo id e antigo variante do producto.
 - temos de rever
+
+

@@ -181,7 +181,7 @@ BEGIN
         occupation NVARCHAR(50),
         number_cars_owned INT,
         date_first_purchase DATE,
-        nif NVARCHAR(20)
+        nif NVARCHAR(20) -- To be encrypted
     );
 END
 GO
@@ -272,39 +272,39 @@ GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'AppUser')
 BEGIN
-    CREATE TABLE AppUser (
+    CREATE TABLE dbo.AppUser (
         app_user_id INT IDENTITY(1,1) CONSTRAINT PK_AppUser PRIMARY KEY,
-        customer_id INT,
-        email NVARCHAR(100) NOT NULL,
-        password_hash NVARCHAR(255) NOT NULL,
+        customer_id INT NULL,
+        email NVARCHAR(100) NOT NULL UNIQUE,
+        password_hash VARBINARY(32) NOT NULL,  -- SHA2_256 output (32 bytes)
         is_active BIT DEFAULT 1,
         created_at DATETIME DEFAULT GETDATE(),
-        last_login DATETIME,
-        CONSTRAINT FK_AppUser_Customer FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
+        last_login DATETIME NULL,
+        CONSTRAINT FK_AppUser_Customer FOREIGN KEY (customer_id) REFERENCES dbo.Customer(customer_id)
     );
 END
-GO
+--GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'PasswordRecoveryQuestion')
 BEGIN
-    CREATE TABLE PasswordRecoveryQuestion (
+    CREATE TABLE dbo.PasswordRecoveryQuestion (
         question_id INT IDENTITY(1,1) CONSTRAINT PK_PasswordRecoveryQuestion PRIMARY KEY,
         app_user_id INT NOT NULL,
-        question_text NVARCHAR(255),
-        answer_hash NVARCHAR(255),
-        CONSTRAINT FK_PasswordRecoveryQuestion_AppUser FOREIGN KEY (app_user_id) REFERENCES AppUser(app_user_id)
+        question_text NVARCHAR(255) NOT NULL,
+        answer_hash VARBINARY(32) NOT NULL,  -- SHA2_256 hash for obfuscation
+        CONSTRAINT FK_PasswordRecoveryQuestion_AppUser FOREIGN KEY (app_user_id) REFERENCES dbo.AppUser(app_user_id)
     );
 END
-GO
+--GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'SentEmails')
 BEGIN
-    CREATE TABLE SentEmails (
+    CREATE TABLE dbo.SentEmails (
         sent_email_id INT IDENTITY(1,1) CONSTRAINT PK_SentEmails PRIMARY KEY,
-        recipient_email NVARCHAR(100),
-        subject NVARCHAR(255),
-        message NVARCHAR(MAX),
+        recipient_email NVARCHAR(100) NOT NULL,
+        subject NVARCHAR(255) NOT NULL,
+        message NVARCHAR(MAX) NOT NULL,
         sent_at DATETIME DEFAULT GETDATE()
     );
 END
-GO
+--GO

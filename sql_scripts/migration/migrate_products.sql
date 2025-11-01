@@ -9,7 +9,7 @@
 --=================================================================================
 
 USE AdventureWorks;
--- GO
+GO
 
 
 --=================================================================================
@@ -27,7 +27,7 @@ WHERE L.EnglishProductCategoryName IS NOT NULL
       FROM AdventureWorks.dbo.ProductCategory AS C
       WHERE dbo.TrimSpaces(C.name) = dbo.TrimSpaces(L.EnglishProductCategoryName)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -45,7 +45,7 @@ WHERE L.EnglishProductSubcategoryName IS NOT NULL
       FROM AdventureWorks.dbo.ProductSubcategory AS SC
       WHERE dbo.TrimSpaces(SC.name) = dbo.TrimSpaces(L.EnglishProductSubcategoryName)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -84,7 +84,7 @@ WHERE NOT EXISTS (
     FROM AdventureWorks.dbo.UnitOfMeasure AS U 
     WHERE U.unit_measure_code = W.unit_measure_code
 );
--- GO
+GO
 
 
 --=================================================================================
@@ -116,7 +116,7 @@ WHERE NOT EXISTS (
     FROM dbo.UnitOfMeasure AS U 
     WHERE U.unit_measure_code = S.unit_measure_code
 );
--- GO
+GO
 
 
 --=================================================================================
@@ -134,7 +134,7 @@ WHERE L.Color IS NOT NULL
       FROM AdventureWorks.dbo.ProductColor AS C
       WHERE dbo.TrimSpaces(C.name) = dbo.TrimSpaces(L.Color)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -152,7 +152,7 @@ WHERE dbo.TrimSpaces(L.SizeRange) <> ''
       FROM AdventureWorks.dbo.ProductSizeRange AS SR
       WHERE dbo.TrimSpaces(SR.name) = dbo.TrimSpaces(L.SizeRange)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -170,7 +170,7 @@ WHERE dbo.TrimSpaces(L.ProductLine) <> ''
       FROM AdventureWorks.dbo.ProductLine AS PL
       WHERE dbo.TrimSpaces(PL.name) = dbo.TrimSpaces(L.ProductLine)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -188,7 +188,7 @@ WHERE dbo.TrimSpaces(L.Class) <> ''
       FROM AdventureWorks.dbo.ProductClass AS PC
       WHERE dbo.TrimSpaces(PC.name) = dbo.TrimSpaces(L.Class)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -206,7 +206,7 @@ WHERE dbo.TrimSpaces(L.Style) <> ''
       FROM AdventureWorks.dbo.ProductStyle AS PS
       WHERE dbo.TrimSpaces(PS.name) = dbo.TrimSpaces(L.Style)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -248,16 +248,25 @@ WHERE NOT EXISTS (
     FROM AdventureWorks.dbo.ProductMaster AS PM
     WHERE dbo.TrimSpaces(PM.model) = dbo.TrimSpaces(L.ModelName)
 );
--- GO
+GO
 
 
 --=================================================================================
 -- STEP 11: MIGRATE PRODUCT VARIANTS
 --=================================================================================
--- 1. Match legacy records to ProductMaster via model.
+-- Strategy:
+-- 1. Match legacy records to ProductMaster via ModelName.
 -- 2. Map all related lookups (color, style, size, range, weight units).
--- 3. Skip duplicate variant names per model.
+-- 3. Include legacy_product_key to allow direct mapping in SalesOrderLine migration.
+-- 4. Avoid duplicates per product_master_id + legacy_product_key.
 --=================================================================================
+
+PRINT('STEP 11 - Migrating ProductVariant records...');
+
+-- Add tracking column if not already present
+IF COL_LENGTH('AdventureWorks.dbo.ProductVariant', 'legacy_product_key') IS NULL
+    ALTER TABLE AdventureWorks.dbo.ProductVariant ADD legacy_product_key INT NULL;
+
 INSERT INTO AdventureWorks.dbo.ProductVariant
 (
     product_master_id,
@@ -274,7 +283,8 @@ INSERT INTO AdventureWorks.dbo.ProductVariant
     list_price,
     dealer_price,
     days_to_manufacture,
-    safety_stock_level
+    safety_stock_level,
+    legacy_product_key
 )
 SELECT
     PM.product_master_id,
@@ -287,21 +297,19 @@ SELECT
     ISNULL(PSR.size_range_id, (SELECT TOP 1 size_range_id FROM AdventureWorks.dbo.ProductSizeRange WHERE name = 'N/A')) AS size_range_id,
     ISNULL(NULLIF(dbo.TrimSpaces(L.SizeUnitMeasureCode), ''), 'NA') AS size_unit_measure_code,
 
-    -- Convert weight safely
     TRY_CONVERT(DECIMAL(18,4), NULLIF(L.Weight, '')) AS weight,
-
     ISNULL(NULLIF(dbo.TrimSpaces(L.WeightUnitMeasureCode), ''), 'NA') AS weight_unit_measure_code,
 
     L.FinishedGoodsFlag,
 
-    -- Convert monetary/numeric fields safely
     TRY_CONVERT(DECIMAL(18,4), NULLIF(L.StandardCost, '')) AS standard_cost,
     TRY_CONVERT(DECIMAL(18,4), NULLIF(L.ListPrice, '')) AS list_price,
     TRY_CONVERT(DECIMAL(18,4), NULLIF(L.DealerPrice, '')) AS dealer_price,
 
     TRY_CONVERT(INT, NULLIF(L.DaysToManufacture, '')) AS days_to_manufacture,
-    TRY_CONVERT(INT, NULLIF(L.SafetyStockLevel, '')) AS safety_stock_level
+    TRY_CONVERT(INT, NULLIF(L.SafetyStockLevel, '')) AS safety_stock_level,
 
+    L.ProductKey AS legacy_product_key
 FROM AdventureWorksLegacy.dbo.Products AS L
 INNER JOIN AdventureWorks.dbo.ProductMaster AS PM
     ON dbo.TrimSpaces(L.ModelName) = dbo.TrimSpaces(PM.model)
@@ -315,6 +323,8 @@ WHERE NOT EXISTS (
     SELECT 1 
     FROM AdventureWorks.dbo.ProductVariant AS PV
     WHERE PV.product_master_id = PM.product_master_id
-      AND dbo.TrimSpaces(PV.variant_name) = dbo.CleanProductName(L.EnglishProductName)
+      AND PV.legacy_product_key = L.ProductKey
 );
--- GO
+
+PRINT('STEP 11 COMPLETE - ProductVariant migration done.');
+GO

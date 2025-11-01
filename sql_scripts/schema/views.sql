@@ -3,7 +3,7 @@
 -- Purpose: Provide summary metrics to compare against AdventureWorksLegacy
 --=================================================================================
 USE AdventureWorks;
--- GO
+GO
 
 
 /* ============================================================================
@@ -12,12 +12,12 @@ USE AdventureWorks;
 ============================================================================ */
 IF OBJECT_ID('vw_ProductCount', 'V') IS NOT NULL
     DROP VIEW vw_ProductCount;
--- GO
+GO
 CREATE VIEW vw_ProductCount AS
 SELECT 
     COUNT(*) AS ProductCount
 FROM dbo.ProductVariant;
--- GO
+GO
 
 
 /* ============================================================================
@@ -26,12 +26,12 @@ FROM dbo.ProductVariant;
 ============================================================================ */
 IF OBJECT_ID('vw_SalesCount', 'V') IS NOT NULL
     DROP VIEW vw_SalesCount;
--- GO
+GO
 CREATE VIEW vw_SalesCount AS
 SELECT 
     COUNT(DISTINCT sales_order_number) AS SalesCount
 FROM dbo.SalesOrder;
--- GO
+GO
 
 
 /* ============================================================================
@@ -40,7 +40,7 @@ FROM dbo.SalesOrder;
 ============================================================================ */
 IF OBJECT_ID('vw_SalesByCustomer', 'V') IS NOT NULL
     DROP VIEW vw_SalesByCustomer;
--- GO
+GO
 CREATE VIEW vw_SalesByCustomer AS
 SELECT 
     C.customer_id,
@@ -51,7 +51,7 @@ JOIN dbo.SalesOrderLine AS SOL
 JOIN dbo.Customer AS C
     ON SO.customer_id = C.customer_id
 GROUP BY C.customer_id;
--- GO
+GO
 
 
 /* ============================================================================
@@ -60,7 +60,7 @@ GROUP BY C.customer_id;
 ============================================================================ */
 IF OBJECT_ID('vw_SalesByYear', 'V') IS NOT NULL
     DROP VIEW vw_SalesByYear;
--- GO
+GO
 CREATE VIEW vw_SalesByYear AS
 SELECT 
     YEAR(SO.order_date) AS SalesYear,
@@ -69,7 +69,7 @@ FROM dbo.SalesOrder AS SO
 JOIN dbo.SalesOrderLine AS SOL
     ON SO.sales_order_id = SOL.sales_order_id
 GROUP BY YEAR(SO.order_date);
--- GO
+GO
 
 
 /* ============================================================================
@@ -78,7 +78,7 @@ GROUP BY YEAR(SO.order_date);
 ============================================================================ */
 IF OBJECT_ID('vw_SalesByYearProduct', 'V') IS NOT NULL
     DROP VIEW vw_SalesByYearProduct;
--- GO
+GO
 CREATE VIEW vw_SalesByYearProduct AS
 SELECT 
     YEAR(SO.order_date) AS SalesYear,
@@ -92,7 +92,7 @@ JOIN dbo.ProductVariant AS PV
 JOIN dbo.ProductMaster AS PM
     ON PV.product_master_id = PM.product_master_id
 GROUP BY YEAR(SO.order_date), PM.model;
--- GO
+GO
 
 
 /* ============================================================================
@@ -101,7 +101,7 @@ GROUP BY YEAR(SO.order_date), PM.model;
 ============================================================================ */
 IF OBJECT_ID('vw_SalesByRegion', 'V') IS NOT NULL
     DROP VIEW vw_SalesByRegion;
--- GO
+GO
 CREATE VIEW vw_SalesByRegion AS
 SELECT 
     ST.region AS SalesRegion,
@@ -112,7 +112,7 @@ JOIN dbo.SalesOrderLine AS SOL
 JOIN dbo.SalesTerritory AS ST
     ON SO.sales_territory_id = ST.sales_territory_id
 GROUP BY ST.region;
--- GO
+GO
 
 
 /* ============================================================================
@@ -121,7 +121,7 @@ GROUP BY ST.region;
 ============================================================================ */
 IF OBJECT_ID('dbo.vw_ProductDetailed', 'V') IS NOT NULL
     DROP VIEW dbo.vw_ProductDetailed;
--- GO
+GO
 CREATE VIEW dbo.vw_ProductDetailed AS
 SELECT
     PV.product_variant_id,
@@ -163,7 +163,7 @@ LEFT JOIN dbo.ProductStyle AS ST
     ON PV.style_id = ST.style_id
 LEFT JOIN dbo.ProductSizeRange AS SR
     ON PV.size_range_id = SR.size_range_id;
--- GO
+GO
 
 
 /* ============================================================================
@@ -172,7 +172,7 @@ LEFT JOIN dbo.ProductSizeRange AS SR
 ============================================================================ */
 IF OBJECT_ID('dbo.vw_CustomerFullInfo', 'V') IS NOT NULL
     DROP VIEW dbo.vw_CustomerFullInfo;
--- GO
+GO
 CREATE VIEW dbo.vw_CustomerFullInfo AS
 SELECT
     C.customer_id,
@@ -218,7 +218,7 @@ LEFT JOIN dbo.SalesOrder AS SO
     ON C.customer_id = SO.customer_id
 LEFT JOIN dbo.SalesTerritory AS ST
     ON SO.sales_territory_id = ST.sales_territory_id;
--- GO
+GO
 
 
 /* ============================================================================
@@ -227,7 +227,7 @@ LEFT JOIN dbo.SalesTerritory AS ST
 ============================================================================ */
 IF OBJECT_ID('dbo.vw_CustomerSalesSummary', 'V') IS NOT NULL
     DROP VIEW dbo.vw_CustomerSalesSummary;
--- GO
+GO
 CREATE VIEW dbo.vw_CustomerSalesSummary AS
 SELECT
     C.customer_id,
@@ -248,4 +248,4 @@ LEFT JOIN dbo.SalesOrder AS SO
 LEFT JOIN dbo.SalesOrderLine AS SOL
     ON SO.sales_order_id = SOL.sales_order_id
 GROUP BY C.customer_id, C.first_name, C.last_name, C.email_address;
--- GO
+GO
