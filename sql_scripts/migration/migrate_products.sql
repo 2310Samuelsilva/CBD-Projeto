@@ -266,6 +266,7 @@ PRINT('STEP 11 - Migrating ProductVariant records...');
 -- Add tracking column if not already present
 IF COL_LENGTH('AdventureWorks.dbo.ProductVariant', 'legacy_product_key') IS NULL
     ALTER TABLE AdventureWorks.dbo.ProductVariant ADD legacy_product_key INT NULL;
+GO
 
 INSERT INTO AdventureWorks.dbo.ProductVariant
 (
@@ -325,9 +326,8 @@ WHERE NOT EXISTS (
     WHERE PV.product_master_id = PM.product_master_id
       AND PV.legacy_product_key = L.ProductKey
 );
-<<<<<<< HEAD
 
+GO
 PRINT('STEP 11 COMPLETE - ProductVariant migration done.');
-=======
->>>>>>> a9d3821ed695c1f2809b165a578034f97da993ae
+
 GO

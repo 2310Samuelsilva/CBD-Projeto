@@ -11,6 +11,8 @@
 -------------------------------------------------------------------------------
 -- STEP 0: CLEAN EXISTING DATA
 -------------------------------------------------------------------------------
+use AdventureWorks;
+GO
 PRINT('STEP 0 - Cleaning dependent tables...');
 DELETE FROM dbo.CustomerAddress;
 DELETE FROM dbo.Customer;

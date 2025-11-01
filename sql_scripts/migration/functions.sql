@@ -2,6 +2,9 @@
 -- FUNCTION: dbo.TrimSpaces
 -- Purpose : Removes leading and trailing spaces from NVARCHAR input.
 --=================================================================================
+Use AdventureWorks;
+GO
+
 IF OBJECT_ID('dbo.TrimSpaces', 'FN') IS NOT NULL
     DROP FUNCTION dbo.TrimSpaces;
  GO
