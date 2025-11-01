@@ -325,6 +325,9 @@ WHERE NOT EXISTS (
     WHERE PV.product_master_id = PM.product_master_id
       AND PV.legacy_product_key = L.ProductKey
 );
+<<<<<<< HEAD
 
 PRINT('STEP 11 COMPLETE - ProductVariant migration done.');
+=======
+>>>>>>> a9d3821ed695c1f2809b165a578034f97da993ae
 GO
