@@ -9,7 +9,7 @@
 --=================================================================================
 
 USE AdventureWorks;
--- GO
+GO
 
 
 --=================================================================================
@@ -27,7 +27,7 @@ WHERE L.EnglishProductCategoryName IS NOT NULL
       FROM AdventureWorks.dbo.ProductCategory AS C
       WHERE dbo.TrimSpaces(C.name) = dbo.TrimSpaces(L.EnglishProductCategoryName)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -45,7 +45,7 @@ WHERE L.EnglishProductSubcategoryName IS NOT NULL
       FROM AdventureWorks.dbo.ProductSubcategory AS SC
       WHERE dbo.TrimSpaces(SC.name) = dbo.TrimSpaces(L.EnglishProductSubcategoryName)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -84,7 +84,7 @@ WHERE NOT EXISTS (
     FROM AdventureWorks.dbo.UnitOfMeasure AS U 
     WHERE U.unit_measure_code = W.unit_measure_code
 );
--- GO
+GO
 
 
 --=================================================================================
@@ -116,7 +116,7 @@ WHERE NOT EXISTS (
     FROM dbo.UnitOfMeasure AS U 
     WHERE U.unit_measure_code = S.unit_measure_code
 );
--- GO
+GO
 
 
 --=================================================================================
@@ -134,7 +134,7 @@ WHERE L.Color IS NOT NULL
       FROM AdventureWorks.dbo.ProductColor AS C
       WHERE dbo.TrimSpaces(C.name) = dbo.TrimSpaces(L.Color)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -152,7 +152,7 @@ WHERE dbo.TrimSpaces(L.SizeRange) <> ''
       FROM AdventureWorks.dbo.ProductSizeRange AS SR
       WHERE dbo.TrimSpaces(SR.name) = dbo.TrimSpaces(L.SizeRange)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -170,7 +170,7 @@ WHERE dbo.TrimSpaces(L.ProductLine) <> ''
       FROM AdventureWorks.dbo.ProductLine AS PL
       WHERE dbo.TrimSpaces(PL.name) = dbo.TrimSpaces(L.ProductLine)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -188,7 +188,7 @@ WHERE dbo.TrimSpaces(L.Class) <> ''
       FROM AdventureWorks.dbo.ProductClass AS PC
       WHERE dbo.TrimSpaces(PC.name) = dbo.TrimSpaces(L.Class)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -206,7 +206,7 @@ WHERE dbo.TrimSpaces(L.Style) <> ''
       FROM AdventureWorks.dbo.ProductStyle AS PS
       WHERE dbo.TrimSpaces(PS.name) = dbo.TrimSpaces(L.Style)
   );
--- GO
+GO
 
 
 --=================================================================================
@@ -248,7 +248,7 @@ WHERE NOT EXISTS (
     FROM AdventureWorks.dbo.ProductMaster AS PM
     WHERE dbo.TrimSpaces(PM.model) = dbo.TrimSpaces(L.ModelName)
 );
--- GO
+GO
 
 
 --=================================================================================
@@ -317,4 +317,4 @@ WHERE NOT EXISTS (
     WHERE PV.product_master_id = PM.product_master_id
       AND dbo.TrimSpaces(PV.variant_name) = dbo.CleanProductName(L.EnglishProductName)
 );
--- GO
+GO

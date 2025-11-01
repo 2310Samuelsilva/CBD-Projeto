@@ -4,7 +4,7 @@
 --=================================================================================
 IF OBJECT_ID('dbo.TrimSpaces', 'FN') IS NOT NULL
     DROP FUNCTION dbo.TrimSpaces;
--- GO
+ GO
 
 CREATE FUNCTION dbo.TrimSpaces (@Input NVARCHAR(MAX))
 RETURNS NVARCHAR(MAX)
@@ -17,7 +17,7 @@ BEGIN
         END
     );
 END;
--- GO
+ GO
 
 
 --=================================================================================
@@ -29,7 +29,7 @@ END;
 --=================================================================================
 IF OBJECT_ID('dbo.CleanProductName', 'FN') IS NOT NULL
     DROP FUNCTION dbo.CleanProductName;
--- GO
+GO
 
 CREATE FUNCTION dbo.CleanProductName (@Input NVARCHAR(255))
 RETURNS NVARCHAR(255)
@@ -57,4 +57,4 @@ BEGIN
 
     RETURN @Clean;
 END;
--- GO
+GO

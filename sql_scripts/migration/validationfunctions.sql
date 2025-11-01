@@ -1,4 +1,5 @@
-
+use AdventureWorks
+GO 
 --Detecta e devolve emails de clientes duplicados.
 CREATE OR ALTER FUNCTION dbo.fn_VerificarClientesDuplicados()
 RETURNS TABLE
