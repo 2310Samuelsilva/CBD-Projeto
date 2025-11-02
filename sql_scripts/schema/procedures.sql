@@ -197,6 +197,7 @@ GO
  8. View Customer Purchase Details
 ============================================================*/
 IF OBJECT_ID('dbo.sp_view_customer_purchase', 'P') IS NOT NULL DROP PROCEDURE dbo.sp_view_customer_purchase;
+GO
 
 CREATE PROCEDURE dbo.sp_view_customer_purchase
     @sale_date DATE,
