@@ -35,19 +35,19 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    IF EXISTS (SELECT 1 FROM dbo.app_user WHERE email = @email)
+    IF EXISTS (SELECT 1 FROM dbo.AppUser WHERE email = @email)
     BEGIN
         RAISERROR('Email already exists.', 16, 1);
         RETURN;
     END;
 
-    INSERT INTO dbo.app_user (customer_id, email, password_hash, is_active)
-    VALUES (@customer_id, dbo.trim_spaces(@email), dbo.compute_hash(@password), 1);
+    INSERT INTO dbo.AppUser (customer_id, email, password_hash, is_active)
+    VALUES (@customer_id, dbo.TrimSpaces(@email), dbo.ComputeHash(@password), 1);
 
     DECLARE @new_app_user_id INT = SCOPE_IDENTITY();
 
-    INSERT INTO dbo.password_recovery_question (app_user_id, question_hash, answer_hash)
-    VALUES (@new_app_user_id, dbo.compute_hash(@question), dbo.compute_hash(@answer));
+    INSERT INTO dbo.PasswordRecoveryQuestion (app_user_id, question_text, answer_hash)
+    VALUES (@new_app_user_id, dbo.ComputeHash(@question), dbo.ComputeHash(@answer));
 
     PRINT 'User created successfully.';
 END;
@@ -66,7 +66,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    UPDATE dbo.app_user
+    UPDATE dbo.AppUser
     SET 
         email = COALESCE(@email, email),
         is_active = COALESCE(@is_active, is_active)
@@ -87,8 +87,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    DELETE FROM dbo.password_recovery_question WHERE app_user_id = @app_user_id;
-    DELETE FROM dbo.app_user WHERE app_user_id = @app_user_id;
+    DELETE FROM dbo.PasswordRecoveryQuestion WHERE app_user_id = @app_user_id;
+    DELETE FROM dbo.AppUser WHERE app_user_id = @app_user_id;
 
     PRINT 'User deleted successfully.';
 END;
@@ -109,14 +109,14 @@ BEGIN
     DECLARE @app_user_id INT;
 
     SELECT @app_user_id = app_user_id
-    FROM dbo.app_user
-    WHERE email = dbo.trim_spaces(@email)
-      AND password_hash = dbo.compute_hash(@password)
+    FROM dbo.AppUser
+    WHERE email = dbo.TrimSpaces(@email)
+      AND password_hash = dbo.ComputeHash(@password)
       AND is_active = 1;
 
     IF @app_user_id IS NOT NULL
     BEGIN
-        UPDATE dbo.app_user SET last_login = GETDATE() WHERE app_user_id = @app_user_id;
+        UPDATE dbo.AppUser SET last_login = GETDATE() WHERE app_user_id = @app_user_id;
         SELECT @app_user_id AS app_user_id, 'Login successful' AS message;
     END
     ELSE
@@ -142,8 +142,8 @@ BEGIN
         @email_message NVARCHAR(MAX);
 
     SELECT @app_user_id = app_user_id 
-    FROM dbo.app_user 
-    WHERE email = dbo.trim_spaces(@email);
+    FROM dbo.AppUser 
+    WHERE email = dbo.TrimSpaces(@email);
 
     IF @app_user_id IS NULL
     BEGIN
@@ -153,9 +153,9 @@ BEGIN
 
     IF NOT EXISTS (
         SELECT 1 
-        FROM dbo.password_recovery_question
+        FROM dbo.PasswordRecoveryQuestion
         WHERE app_user_id = @app_user_id
-          AND answer_hash = dbo.compute_hash(@answer)
+          AND answer_hash = dbo.ComputeHash(@answer)
     )
     BEGIN
         RAISERROR('Incorrect recovery answer.', 16, 1);
@@ -166,8 +166,8 @@ BEGIN
     SET @new_password = LEFT(CONVERT(NVARCHAR(50), NEWID()), 8);
     SET @email_message = 'Your new password is: ' + @new_password;
 
-    UPDATE dbo.app_user 
-    SET password_hash = dbo.compute_hash(@new_password)
+    UPDATE dbo.AppUser 
+    SET password_hash = dbo.ComputeHash(@new_password)
     WHERE app_user_id = @app_user_id;
 
     EXEC dbo.sp_send_email 

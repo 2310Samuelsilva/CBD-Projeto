@@ -127,6 +127,7 @@ BEGIN TRY
     EXEC dbo.sp_authenticate_user
         @email = @test_email,
         @password = @test_password;
+    PRINT('Authenticated!');
 END TRY
 BEGIN CATCH
     PRINT('Auth Error (valid pw): ' + ERROR_MESSAGE());

@@ -99,13 +99,13 @@ END CATCH;
 
 -- Verify user creation
 SELECT @app_user_id = app_user_id 
-FROM dbo.app_user 
+FROM dbo.AppUser 
 WHERE email = @test_email;
 
 PRINT('AppUserID: ' + ISNULL(CAST(@app_user_id AS NVARCHAR(10)), 'NULL'));
 PRINT('--- VERIFY USER TABLES ---');
-SELECT * FROM dbo.app_user WHERE app_user_id = @app_user_id;
-SELECT * FROM dbo.password_recovery_question WHERE app_user_id = @app_user_id;
+SELECT * FROM dbo.AppUser WHERE app_user_id = @app_user_id;
+SELECT * FROM dbo.PasswordRecoveryQuestion WHERE app_user_id = @app_user_id;
 GO
 
 
@@ -166,7 +166,7 @@ BEGIN CATCH
 END CATCH;
 
 PRINT('--- VERIFY UPDATED PASSWORD HASH ---');
-SELECT password_hash FROM dbo.app_user WHERE email = @test_email;
+SELECT password_hash FROM dbo.AppUser WHERE email = @test_email;
 GO
 
 
@@ -189,7 +189,7 @@ DECLARE
 SELECT @test_email = test_email FROM #test_vars;
 
 PRINT('=== CLEANING UP TEST DATA ===');
-SELECT @app_user_id = app_user_id FROM dbo.app_user WHERE email = @test_email;
+SELECT @app_user_id = app_user_id FROM dbo.AppUser WHERE email = @test_email;
 SELECT @customer_id = customer_id FROM dbo.customer WHERE email_address = @test_email;
 
 IF @app_user_id IS NOT NULL
