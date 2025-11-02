@@ -12,7 +12,7 @@
         "data": {
           "label": "ProductColors",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -36,7 +36,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -56,7 +56,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -75,7 +75,7 @@
         "data": {
           "label": "ProductCategory ",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -99,7 +99,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -120,7 +120,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -139,7 +139,7 @@
         "data": {
           "label": "SubCategory",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -163,7 +163,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -184,7 +184,7 @@
           "label": "CategoryID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -205,7 +205,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -224,7 +224,7 @@
         "data": {
           "label": "ProductLine",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -248,7 +248,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -268,7 +268,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -287,7 +287,7 @@
         "data": {
           "label": "ProductClass",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -311,7 +311,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -331,7 +331,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -350,7 +350,7 @@
         "data": {
           "label": "UnitOfMeasure",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -370,7 +370,7 @@
         "data": {
           "label": "ProductSizeRange",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -390,7 +390,7 @@
         "data": {
           "label": "ProductStyle",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -414,7 +414,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -434,7 +434,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -457,7 +457,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -477,7 +477,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -498,7 +498,7 @@
           "label": "Code",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -519,7 +519,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -540,7 +540,7 @@
           "label": "ConversionToBase",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -567,7 +567,7 @@
             "maxCardinality": "Many"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -580,13 +580,13 @@
         "id": "6f707fe0-715b-4545-9a73-8b9dcb63c6b3",
         "type": "Entity",
         "position": {
-          "x": 1360.0615111533884,
-          "y": 325.0045695756485
+          "x": 1589.533454361635,
+          "y": 297.1453560232096
         },
         "data": {
           "label": "Currency",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -606,7 +606,7 @@
         "data": {
           "label": "SalesTerritory",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -626,7 +626,7 @@
         "data": {
           "label": "SalesOrderLine",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -646,7 +646,7 @@
         "data": {
           "label": "SalesOrder",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -670,7 +670,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -691,7 +691,7 @@
           "label": "SalesOrderNumber",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -712,7 +712,7 @@
           "label": "CustomerID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -733,7 +733,7 @@
           "label": "SalesTerritoryID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -754,7 +754,7 @@
           "label": "OrderDate",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -768,14 +768,14 @@
         "parentId": "b1a643c3-3c41-432f-bf90-4d9a4a133c50",
         "type": "Attribute",
         "position": {
-          "x": -121.74849681241199,
-          "y": 80.84375157845199
+          "x": -104.88634124119903,
+          "y": 92.57394675842625
         },
         "data": {
           "label": "DueDate",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -796,7 +796,7 @@
           "label": "ShipDate",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -817,7 +817,7 @@
           "label": "TaxAmt",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -838,7 +838,7 @@
           "label": "SalesOrderID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -859,28 +859,7 @@
           "label": "ProductID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
-        },
-        "measured": {
-          "width": 100,
-          "height": 50
-        },
-        "selected": false,
-        "dragging": false
-      },
-      {
-        "id": "c1788c15-7459-4785-b6ac-af18dbeb6801",
-        "parentId": "3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
-        "type": "Attribute",
-        "position": {
-          "x": 120.42898890163883,
-          "y": 124.38751263395747
-        },
-        "data": {
-          "label": "CurrencyID",
-          "types": [],
-          "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -894,14 +873,14 @@
         "parentId": "3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
         "type": "Attribute",
         "position": {
-          "x": -7.917047464637108,
-          "y": 143.26572941241395
+          "x": 91.05647436639583,
+          "y": 138.13376902117523
         },
         "data": {
           "label": "ProductStandardCost",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -922,7 +901,7 @@
           "label": "UnitPrice",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -943,7 +922,7 @@
           "label": "Quantity",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -964,7 +943,7 @@
           "label": "TotalSalesAmount",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -985,7 +964,7 @@
           "label": "Freight",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1008,7 +987,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1029,7 +1008,7 @@
           "label": "LineNumber",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1052,7 +1031,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1073,7 +1052,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1094,7 +1073,7 @@
           "label": "Region",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1117,7 +1096,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1138,7 +1117,7 @@
           "label": "Code",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1158,33 +1137,6 @@
         "data": {
           "label": "Name",
           "types": [],
-          "isSelected": false,
-          "isConnectable": true
-        },
-        "measured": {
-          "width": 100,
-          "height": 50
-        },
-        "selected": false,
-        "dragging": false
-      },
-      {
-        "id": "f6102161-6c5e-42b1-b8ea-78a37471ffef",
-        "type": "Relationship",
-        "position": {
-          "x": 1447.1490332643996,
-          "y": 182.49771521217585
-        },
-        "data": {
-          "label": "É faturada em",
-          "sourceEntityDetails": {
-            "id": "6f707fe0-715b-4545-9a73-8b9dcb63c6b3",
-            "maxCardinality": "Many"
-          },
-          "targetEntityDetails": {
-            "id": "3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
-            "maxCardinality": "One"
-          },
           "isSelected": false,
           "isConnectable": false
         },
@@ -1213,7 +1165,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -1240,7 +1192,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -1259,7 +1211,7 @@
         "data": {
           "label": "Customer",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -1281,7 +1233,7 @@
           "label": "NIF",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1302,7 +1254,7 @@
           "label": "Title",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1323,7 +1275,7 @@
           "label": "MiddleName",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1344,7 +1296,7 @@
           "label": "BirthDate",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1365,7 +1317,7 @@
           "label": "Gender",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1386,7 +1338,7 @@
           "label": "YearlyIncome",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1407,7 +1359,7 @@
           "label": "NumberCarsOwned",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1428,7 +1380,7 @@
           "label": "PasswordHash",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1451,7 +1403,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1472,7 +1424,7 @@
           "label": "FirstName",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1493,7 +1445,7 @@
           "label": "LastName",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1514,7 +1466,7 @@
           "label": "MaritalStatus",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1535,7 +1487,7 @@
           "label": "EmailAddress",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1556,7 +1508,7 @@
           "label": "Education",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1577,7 +1529,7 @@
           "label": "Occupation",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1598,7 +1550,7 @@
           "label": "DateFirstPurchase",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1617,7 +1569,7 @@
         "data": {
           "label": "CustomerAddress",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -1641,7 +1593,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1662,7 +1614,7 @@
           "label": "CustomerID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1683,7 +1635,7 @@
           "label": "AddressLine1",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1704,7 +1656,7 @@
           "label": "City",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1725,7 +1677,7 @@
           "label": "StateProvinceID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1746,7 +1698,7 @@
           "label": "PostalCode",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1767,7 +1719,7 @@
           "label": "CountryID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1788,7 +1740,7 @@
           "label": "Phone",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1807,7 +1759,7 @@
         "data": {
           "label": "StateProvince",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -1831,7 +1783,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1852,7 +1804,7 @@
           "label": "CountryID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1873,7 +1825,7 @@
           "label": "Code",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1894,7 +1846,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1913,7 +1865,7 @@
         "data": {
           "label": "CountryRegion",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -1937,7 +1889,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1957,7 +1909,7 @@
           "label": "Code",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -1978,7 +1930,7 @@
           "label": "Name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2004,7 +1956,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -2031,7 +1983,7 @@
             "maxCardinality": "Many"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -2058,7 +2010,7 @@
             "maxCardinality": "Many"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -2085,7 +2037,7 @@
             "maxCardinality": "Many"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -2112,7 +2064,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -2131,7 +2083,7 @@
         "data": {
           "label": "AppUser",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -2153,7 +2105,7 @@
           "label": "LastLogin",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2176,7 +2128,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2197,7 +2149,7 @@
           "label": "CustomerID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2218,7 +2170,7 @@
           "label": "Email",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2239,7 +2191,7 @@
           "label": "PasswordHash",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2260,7 +2212,7 @@
           "label": "IsActive",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2281,7 +2233,7 @@
           "label": "CreatedAt",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2300,7 +2252,7 @@
         "data": {
           "label": "PasswordRecoveryQuestion",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -2322,7 +2274,7 @@
           "label": "AnswerHash",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2345,7 +2297,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2366,7 +2318,7 @@
           "label": "AppUserID",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2387,7 +2339,7 @@
           "label": "QuestionText",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2406,7 +2358,7 @@
         "data": {
           "label": "SentEmails",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -2428,7 +2380,7 @@
           "label": "SentAt",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2451,7 +2403,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2472,7 +2424,7 @@
           "label": "RecipientEmail",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2493,7 +2445,7 @@
           "label": "Subject",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2514,7 +2466,7 @@
           "label": "Message",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2541,7 +2493,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -2568,7 +2520,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -2594,7 +2546,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -2613,7 +2565,7 @@
         "data": {
           "label": "ProductMaster",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -2637,7 +2589,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2658,7 +2610,7 @@
           "label": "product_name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2679,7 +2631,7 @@
           "label": "model",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2700,7 +2652,7 @@
           "label": "category_id",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2721,7 +2673,7 @@
           "label": "subcategory_id",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2742,7 +2694,7 @@
           "label": "product_line_id",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2763,7 +2715,7 @@
           "label": "class_id",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2784,7 +2736,7 @@
           "label": "description",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2803,7 +2755,7 @@
         "data": {
           "label": "ProductVariant",
           "type": "Regular",
-          "isConnectable": true,
+          "isConnectable": false,
           "isSelected": false
         },
         "measured": {
@@ -2827,7 +2779,7 @@
             "Unique": true
           },
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2848,7 +2800,7 @@
           "label": "product_master_id",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2869,7 +2821,7 @@
           "label": "color_id",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2890,7 +2842,7 @@
           "label": "size",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2911,7 +2863,7 @@
           "label": "size_unit_measure_code",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2932,7 +2884,7 @@
           "label": "weight_unit_measure_code",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2953,7 +2905,7 @@
           "label": "standard_cost",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2974,7 +2926,7 @@
           "label": "dealer_price",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -2995,7 +2947,7 @@
           "label": "safety_stock_level",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -3016,7 +2968,7 @@
           "label": "variant_name",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -3037,7 +2989,7 @@
           "label": "style_id",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -3058,7 +3010,7 @@
           "label": "size_range_id",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -3079,7 +3031,7 @@
           "label": "weight",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -3100,7 +3052,7 @@
           "label": "finished_goods_flag",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -3121,7 +3073,7 @@
           "label": "list_price",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -3142,7 +3094,7 @@
           "label": "days_to_manufacture",
           "types": [],
           "isSelected": false,
-          "isConnectable": true
+          "isConnectable": false
         },
         "measured": {
           "width": 100,
@@ -3169,7 +3121,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3196,7 +3148,7 @@
             "maxCardinality": "Many"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3223,7 +3175,7 @@
             "maxCardinality": "Many"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3250,7 +3202,7 @@
             "maxCardinality": "Many"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3277,7 +3229,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3304,7 +3256,7 @@
             "maxCardinality": "Many"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3331,7 +3283,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3358,7 +3310,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3385,7 +3337,7 @@
             "maxCardinality": "One"
           },
           "isSelected": false,
-          "isConnectable": false
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3411,7 +3363,56 @@
             "id": "42712ad1-f4bb-4299-9e1f-5834f65dffa5",
             "maxCardinality": "One"
           },
-          "isSelected": false
+          "isSelected": false,
+          "isConnectable": true
+        },
+        "measured": {
+          "width": 100,
+          "height": 50
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "4daa4610-38fb-4b29-a656-cf65ed93eb6a",
+        "parentId": "b1a643c3-3c41-432f-bf90-4d9a4a133c50",
+        "type": "Attribute",
+        "position": {
+          "x": -123.36640434072979,
+          "y": -136.56287391820075
+        },
+        "data": {
+          "label": "CurrencyID",
+          "types": [],
+          "isSelected": false,
+          "isConnectable": true
+        },
+        "measured": {
+          "width": 100,
+          "height": 50
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "1c797318-d178-49f7-996e-89ee6c885240",
+        "type": "Relationship",
+        "position": {
+          "x": 1765.3041585961012,
+          "y": 236.96654147528739
+        },
+        "data": {
+          "label": "é faturada em",
+          "sourceEntityDetails": {
+            "id": "6f707fe0-715b-4545-9a73-8b9dcb63c6b3",
+            "maxCardinality": "One"
+          },
+          "targetEntityDetails": {
+            "id": "b1a643c3-3c41-432f-bf90-4d9a4a133c50",
+            "maxCardinality": "Many"
+          },
+          "isSelected": false,
+          "isConnectable": true
         },
         "measured": {
           "width": 100,
@@ -3691,12 +3692,6 @@
         "target": "eecf5a48-c972-4ca8-a29f-21444f864f34"
       },
       {
-        "id": "57bb89d8-e287-43ac-a26a-872fbd60ef4f",
-        "type": "Attribute",
-        "source": "3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
-        "target": "c1788c15-7459-4785-b6ac-af18dbeb6801"
-      },
-      {
         "id": "6a96d7b9-ce04-4864-ac2d-9709c6e62020",
         "type": "Attribute",
         "source": "3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
@@ -3781,26 +3776,6 @@
         "target": "3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
         "data": {
           "id": "74a8a068-ea55-4278-9fc3-f567bc603a58->3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
-          "maxCardinality": "Many"
-        }
-      },
-      {
-        "id": "f6102161-6c5e-42b1-b8ea-78a37471ffef->6f707fe0-715b-4545-9a73-8b9dcb63c6b3;6f707fe0-715b-4545-9a73-8b9dcb63c6b3->3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
-        "type": "Relationship",
-        "source": "f6102161-6c5e-42b1-b8ea-78a37471ffef",
-        "target": "6f707fe0-715b-4545-9a73-8b9dcb63c6b3",
-        "data": {
-          "id": "f6102161-6c5e-42b1-b8ea-78a37471ffef->6f707fe0-715b-4545-9a73-8b9dcb63c6b3",
-          "maxCardinality": "One"
-        }
-      },
-      {
-        "id": "f6102161-6c5e-42b1-b8ea-78a37471ffef->3c62a5e1-40f6-48e5-85a1-e3431dc89aef;6f707fe0-715b-4545-9a73-8b9dcb63c6b3->3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
-        "type": "Relationship",
-        "source": "f6102161-6c5e-42b1-b8ea-78a37471ffef",
-        "target": "3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
-        "data": {
-          "id": "f6102161-6c5e-42b1-b8ea-78a37471ffef->3c62a5e1-40f6-48e5-85a1-e3431dc89aef",
           "maxCardinality": "Many"
         }
       },
@@ -4629,12 +4604,38 @@
           "id": "ede566db-da00-414b-b1f9-e4f5446f2df7->42712ad1-f4bb-4299-9e1f-5834f65dffa5",
           "maxCardinality": "One"
         }
+      },
+      {
+        "id": "c5bfd522-dc1a-4c81-8098-5a49461f294a",
+        "type": "Attribute",
+        "source": "b1a643c3-3c41-432f-bf90-4d9a4a133c50",
+        "target": "4daa4610-38fb-4b29-a656-cf65ed93eb6a"
+      },
+      {
+        "id": "1c797318-d178-49f7-996e-89ee6c885240->6f707fe0-715b-4545-9a73-8b9dcb63c6b3;6f707fe0-715b-4545-9a73-8b9dcb63c6b3->b1a643c3-3c41-432f-bf90-4d9a4a133c50",
+        "type": "Relationship",
+        "source": "1c797318-d178-49f7-996e-89ee6c885240",
+        "target": "6f707fe0-715b-4545-9a73-8b9dcb63c6b3",
+        "data": {
+          "id": "1c797318-d178-49f7-996e-89ee6c885240->6f707fe0-715b-4545-9a73-8b9dcb63c6b3",
+          "maxCardinality": "One"
+        }
+      },
+      {
+        "id": "1c797318-d178-49f7-996e-89ee6c885240->b1a643c3-3c41-432f-bf90-4d9a4a133c50;6f707fe0-715b-4545-9a73-8b9dcb63c6b3->b1a643c3-3c41-432f-bf90-4d9a4a133c50",
+        "type": "Relationship",
+        "source": "1c797318-d178-49f7-996e-89ee6c885240",
+        "target": "b1a643c3-3c41-432f-bf90-4d9a4a133c50",
+        "data": {
+          "id": "1c797318-d178-49f7-996e-89ee6c885240->b1a643c3-3c41-432f-bf90-4d9a4a133c50",
+          "maxCardinality": "Many"
+        }
       }
     ],
     "viewport": {
-      "x": 622.700796135302,
-      "y": 351.2918482834827,
-      "zoom": 0.5937159953023277
+      "x": 503.3045794296861,
+      "y": 340.9722632333212,
+      "zoom": 0.6820005871392117
     }
   },
   "name": "Projeto",
@@ -4645,5 +4646,5 @@
     "id": 103442
   },
   "id": 117235,
-  "updatedAtTimestamp": 1761936844
+  "updatedAtTimestamp": 1762102247
 }
