@@ -208,6 +208,7 @@ Hash: https://blog.sqlauthority.com/2023/10/20/sql-server-best-practices-for-sec
 - `customer_id` (FK → Customer)
 - `sales_territory_id` (FK → SalesTerritory)
 - `order_date` (DATE)
+- `currency_id` (FK → Currency)
 - `due_date` (DATE)
 - `ship_date` (DATE)
 
@@ -219,7 +220,6 @@ Hash: https://blog.sqlauthority.com/2023/10/20/sql-server-best-practices-for-sec
 - `sales_order_id` (FK → SalesOrder)
 - `line_number` (INT)
 - `product_variant_id` (FK → ProductVariant)
-- `currency_id` (FK → Currency)
 - `product_standard_cost` (DECIMAL(10,2))
 - `unit_price` (DECIMAL(10,2))
 - `quantity` (INT)
@@ -639,6 +639,7 @@ Hash: https://blog.sqlauthority.com/2023/10/20/sql-server-best-practices-for-sec
     sales_order_number,
     customer_id,
     sales_territory_id,
+    currency_id,
     order_date,
     due_date,
     ship_date
@@ -647,6 +648,7 @@ Hash: https://blog.sqlauthority.com/2023/10/20/sql-server-best-practices-for-sec
 - Chaves estrangeiras:
   - {customer_id} → Customer {customer_id}
   - {sales_territory_id} → SalesTerritory {sales_territory_id}
+  - {currency_id} → Currency {currency_id}
 
 ---
 
@@ -655,7 +657,6 @@ Hash: https://blog.sqlauthority.com/2023/10/20/sql-server-best-practices-for-sec
     sales_order_id,
     line_number,
     product_variant_id,
-    currency_id,
     product_standard_cost,
     unit_price,
     quantity,
@@ -666,7 +667,6 @@ Hash: https://blog.sqlauthority.com/2023/10/20/sql-server-best-practices-for-sec
 - Chaves estrangeiras:
   - {sales_order_id} → SalesOrder {sales_order_id}
   - {product_variant_id} → ProductVariant {product_variant_id}
-  - {currency_id} → Currency {currency_id}
 
 
 ##---------------------------------------------------------------------------------

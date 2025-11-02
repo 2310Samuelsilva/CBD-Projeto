@@ -92,7 +92,7 @@ GO
  - Skip duplicates by email.
 ===============================================================================*/
 PRINT('STEP 4 - Inserting Customers...');
-OPEN SYMMETRIC KEY KeyNIF DECRYPTION BY CERTIFICATE CertNIF;
+-- OPEN SYMMETRIC KEY KeyNIF DECRYPTION BY CERTIFICATE CertNIF;
 
 INSERT INTO dbo.Customer (
     title,
@@ -134,7 +134,7 @@ WHERE c.EmailAddress IS NOT NULL
         WHERE n.email_address = dbo.TrimSpaces(c.EmailAddress)
   );
 
-CLOSE SYMMETRIC KEY KeyNIF;
+-- CLOSE SYMMETRIC KEY KeyNIF;
 GO
 
 /*===============================================================================

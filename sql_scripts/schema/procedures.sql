@@ -191,3 +191,54 @@ BEGIN
     SELECT * FROM dbo.SentEmails ORDER BY sent_at DESC;
 END;
 GO
+
+
+/*============================================================
+ 8. View Customer Purchase Details
+============================================================*/
+IF OBJECT_ID('dbo.sp_view_customer_purchase', 'P') IS NOT NULL DROP PROCEDURE dbo.sp_view_customer_purchase;
+
+CREATE PROCEDURE dbo.sp_view_customer_purchase
+    @sale_date DATE,
+    @customer_id INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        C.customer_id,
+        CONCAT(C.first_name, ' ', C.last_name) AS customer_name,
+        SO.sales_order_id,
+        SO.sales_order_number,
+        SO.order_date,
+        PV.product_variant_id,
+        PV.variant_name,
+        SOL.line_number,
+        SOL.quantity,
+        SOL.unit_price,
+        (SOL.quantity * SOL.unit_price) AS item_total,
+        SOL.tax_amt,
+        SOL.freight,
+        (SOL.quantity * SOL.unit_price)
+            + ISNULL(SOL.tax_amt, 0)
+            + ISNULL(SOL.freight, 0) AS line_total,
+        CU.code AS currency_code
+    FROM 
+        dbo.SalesOrder AS SO
+        INNER JOIN dbo.Customer AS C 
+            ON SO.customer_id = C.customer_id
+        INNER JOIN dbo.SalesOrderLine AS SOL 
+            ON SO.sales_order_id = SOL.sales_order_id
+        INNER JOIN dbo.ProductVariant AS PV 
+            ON SOL.product_variant_id = PV.product_variant_id
+        INNER JOIN dbo.ProductMaster AS PM
+            ON PV.product_master_id = PM.product_master_id
+        LEFT JOIN dbo.Currency AS CU
+            ON SO.currency_id = CU.currency_id
+    WHERE 
+        SO.customer_id = @customer_id
+        AND CAST(SO.order_date AS DATE) = @sale_date
+    ORDER BY 
+        SO.sales_order_id, SOL.line_number;
+END;
+GO

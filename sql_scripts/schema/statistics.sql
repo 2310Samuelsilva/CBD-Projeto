@@ -16,7 +16,7 @@ BEGIN
     PRINT('Tabela dbStatistics criada com sucesso.');
 END
 ELSE
-    PRINT('Tabela dbStatistics já existe.');
+    PRINT('Tabela dbStatistics jï¿½ existe.');
 GO
 
 
@@ -32,7 +32,7 @@ BEGIN
     DECLARE @table_name NVARCHAR(255);
     DECLARE @sql NVARCHAR(MAX);
 
-    -- Tabela temporária para armazenar resultados intermédios
+    -- Tabela temporï¿½ria para armazenar resultados intermï¿½dios
     CREATE TABLE #tmpStats (
         name NVARCHAR(255),
         rows BIGINT,
@@ -51,7 +51,7 @@ BEGIN
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        -- Limpar tabela temporária
+        -- Limpar tabela temporï¿½ria
         DELETE FROM #tmpStats;
 
         -- Executar sp_spaceused para cada tabela
@@ -86,7 +86,7 @@ BEGIN
 
     DROP TABLE #tmpStats;
 
-    PRINT('Estatísticas recolhidas com sucesso e registadas em dbStatistics.');
+    PRINT('Estatï¿½sticas recolhidas com sucesso e registadas em dbStatistics.');
 END
 GO
 

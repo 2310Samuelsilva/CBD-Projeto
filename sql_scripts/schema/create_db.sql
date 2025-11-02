@@ -237,11 +237,13 @@ BEGIN
         sales_order_number NVARCHAR(50) NOT NULL,
         customer_id INT NOT NULL,
         sales_territory_id INT,
+        currency_id INT,
         order_date DATE,
         due_date DATE,
         ship_date DATE,
         CONSTRAINT FK_SalesOrder_Customer FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
-        CONSTRAINT FK_SalesOrder_SalesTerritory FOREIGN KEY (sales_territory_id) REFERENCES SalesTerritory(sales_territory_id)
+        CONSTRAINT FK_SalesOrder_SalesTerritory FOREIGN KEY (sales_territory_id) REFERENCES SalesTerritory(sales_territory_id),
+        CONSTRAINT FK_SalesOrderLine_Currency FOREIGN KEY (currency_id) REFERENCES Currency(currency_id)
     );
 END
 GO
@@ -253,7 +255,6 @@ BEGIN
         sales_order_id INT NOT NULL,
         line_number INT,
         product_variant_id INT NOT NULL,
-        currency_id INT,
         product_standard_cost DECIMAL(10,2),
         unit_price DECIMAL(10,2),
         quantity INT,
@@ -261,7 +262,6 @@ BEGIN
         freight DECIMAL(10,2),
         CONSTRAINT FK_SalesOrderLine_SalesOrder FOREIGN KEY (sales_order_id) REFERENCES SalesOrder(sales_order_id),
         CONSTRAINT FK_SalesOrderLine_ProductVariant FOREIGN KEY (product_variant_id) REFERENCES ProductVariant(product_variant_id),
-        CONSTRAINT FK_SalesOrderLine_Currency FOREIGN KEY (currency_id) REFERENCES Currency(currency_id)
     );
 END
 GO

@@ -75,6 +75,7 @@ INSERT INTO dbo.SalesOrder (
     sales_order_number,
     customer_id,
     sales_territory_id,
+    currency_id,
     order_date,
     due_date,
     ship_date
@@ -83,6 +84,7 @@ SELECT DISTINCT
     dbo.TrimSpaces(S.SalesOrderNumber),
     CM.new_customer_id,
     ST.sales_territory_id,
+    C.currency_id,
     CAST(S.OrderDate AS DATE),
     CAST(S.DueDate AS DATE),
     CAST(S.ShipDate AS DATE)
@@ -91,6 +93,10 @@ LEFT JOIN AdventureWorksLegacy.dbo.SalesTerritory AS LST
     ON S.SalesTerritoryKey = LST.SalesTerritoryKey
 LEFT JOIN dbo.SalesTerritory AS ST
     ON dbo.TrimSpaces(LST.SalesTerritoryRegion) = dbo.TrimSpaces(ST.region)
+LEFT JOIN AdventureWorksLegacy.dbo.Currency AS LC
+    ON S.CurrencyKey = LC.CurrencyKey
+LEFT JOIN dbo.Currency AS C
+    ON dbo.TrimSpaces(LC.CurrencyAlternateKey) = dbo.TrimSpaces(C.code)
 JOIN #CustomerMap AS CM
     ON S.CustomerKey = CM.old_customer_key
 WHERE CM.new_customer_id IS NOT NULL
@@ -99,7 +105,6 @@ WHERE CM.new_customer_id IS NOT NULL
       WHERE dbo.TrimSpaces(SO.sales_order_number) = dbo.TrimSpaces(S.SalesOrderNumber)
   );
 GO
-
 --=================================================================================
 -- STEP 5: MIGRATE SALES ORDER LINES (using ProductVariant.legacy_product_key)
 --=================================================================================
@@ -109,7 +114,6 @@ INSERT INTO AdventureWorks.dbo.SalesOrderLine (
     sales_order_id,
     line_number,
     product_variant_id,
-    currency_id,
     product_standard_cost,
     unit_price,
     quantity,
@@ -120,7 +124,6 @@ SELECT
     SO.sales_order_id,
     S.SalesOrderLineNumber,
     PV.product_variant_id,
-    C.currency_id,
     TRY_CONVERT(DECIMAL(18,4), S.ProductStandardCost) AS product_standard_cost,
     TRY_CONVERT(DECIMAL(18,4), S.UnitPrice) AS unit_price,
     CAST(
@@ -138,8 +141,6 @@ INNER JOIN #CustomerMap AS CM
     ON S.CustomerKey = CM.old_customer_key
 INNER JOIN AdventureWorks.dbo.ProductVariant AS PV
     ON S.ProductKey = PV.legacy_product_key
-LEFT JOIN AdventureWorks.dbo.Currency AS C
-    ON dbo.TrimSpaces(S.CurrencyKey) = dbo.TrimSpaces(C.code)
 WHERE CM.new_customer_id IS NOT NULL
   AND NOT EXISTS (
       SELECT 1

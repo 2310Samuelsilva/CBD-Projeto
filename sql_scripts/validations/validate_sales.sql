@@ -125,6 +125,6 @@ SELECT
     (SELECT COUNT(*) FROM AdventureWorks.dbo.Currency) AS TotalCurrency,
     (SELECT COUNT(*) FROM AdventureWorks.dbo.SalesTerritory) AS TotalTerritories,
     (SELECT COUNT(*) FROM AdventureWorks.dbo.SalesOrder) AS TotalSalesOrders,
-    (SELECT COUNT(*) FROM AdventureWorks.dbo.SalesOrderLine) AS TotalSalesOrderLines,
-    (SELECT COUNT(*) FROM AdventureWorks.dbo.ProductVariant WHERE legacy_product_key IS NOT NULL) AS TotalVariantsWithLegacyKey;
+    (SELECT COUNT(*) FROM AdventureWorks.dbo.SalesOrderLine) AS TotalSalesOrderLines
+    --(SELECT COUNT(*) FROM AdventureWorks.dbo.ProductVariant WHERE legacy_product_key IS NOT NULL) AS TotalVariantsWithLegacyKey;
 GO
