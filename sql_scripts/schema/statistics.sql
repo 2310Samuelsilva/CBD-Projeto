@@ -16,7 +16,7 @@ BEGIN
     PRINT('Tabela dbStatistics criada com sucesso.');
 END
 ELSE
-    PRINT('Tabela dbStatistics j� existe.');
+    PRINT('Tabela dbStatistics ja existe.');
 GO
 
 

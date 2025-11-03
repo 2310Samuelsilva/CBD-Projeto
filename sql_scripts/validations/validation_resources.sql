@@ -5,6 +5,8 @@
 --============================================================
 -- 1. Function: Detect duplicate customer emails
 --============================================================
+use AdventureWorks
+GO
 CREATE OR ALTER FUNCTION dbo.fn_check_duplicate_customers()
 RETURNS TABLE
 AS
