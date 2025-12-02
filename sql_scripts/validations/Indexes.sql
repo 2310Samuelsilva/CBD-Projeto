@@ -1,81 +1,151 @@
 use AdventureWorks
 GO
 
--- Total de vendas = SUM(unit_price * quantity)
+-- =========================
+-- INDEXES: Products
+-- =========================
+
+/* ProductVariant: índice por product_master_id para junções com ProductMaster. */
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
+    WHERE i.name = 'IX_ProductVariant_ProductMaster' AND t.name = 'ProductVariant'
+)
+BEGIN
+    CREATE INDEX IX_ProductVariant_ProductMaster
+    ON dbo.ProductVariant (product_master_id)
+    INCLUDE (variant_name, color_id);
+END;
+
+/* ProductVariant: índice por legacy_product_key (se tiveres queries para mapear legacy -> novo). */
+IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('dbo.ProductVariant') AND name = 'legacy_product_key')
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
+        WHERE i.name = 'IX_ProductVariant_LegacyKey' AND t.name = 'ProductVariant'
+    )
+    BEGIN
+        CREATE INDEX IX_ProductVariant_LegacyKey
+        ON dbo.ProductVariant (legacy_product_key);
+    END
+END;
+
+/* ProductMaster: índice por category_id para agregações por categoria. */
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
+    WHERE i.name = 'IX_ProductMaster_Category' AND t.name = 'ProductMaster'
+)
+BEGIN
+    CREATE INDEX IX_ProductMaster_Category
+    ON dbo.ProductMaster (category_id);
+END;
+
+-- =========================
+-- INDEXES: Dimension / Lookup tables
+-- =========================
+
+/* SalesTerritory: índice por region (usado em filtros por região). */
+IF NOT EXISTS (
+    SELECT 1 
+    FROM sys.indexes i 
+    JOIN sys.tables t ON i.object_id = t.object_id
+    WHERE i.name = 'IX_SalesTerritory_Region'
+      AND t.name = 'SalesTerritory'
+)
+BEGIN
+    CREATE INDEX IX_SalesTerritory_Region
+    ON dbo.SalesTerritory (region);
+END;
+
+/* Currency: índice por code para lookup rápido. */
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
+    WHERE i.name = 'IX_Currency_Code' AND t.name = 'Currency'
+)
+BEGIN
+    CREATE INDEX IX_Currency_Code
+    ON dbo.Currency (code);
+END;
+
+/* StateProvince: índice por code para lookup e joins. */
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
+    WHERE i.name = 'IX_StateProvince_Code' AND t.name = 'StateProvince'
+)
+BEGIN
+    CREATE INDEX IX_StateProvince_Code
+    ON dbo.StateProvince (code)
+    INCLUDE (name, country_id);
+END;
+
+/* CountryRegion: índice por code. */
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
+    WHERE i.name = 'IX_CountryRegion_Code' AND t.name = 'CountryRegion'
+)
+BEGIN
+    CREATE INDEX IX_CountryRegion_Code
+    ON dbo.CountryRegion (code)
+    INCLUDE (name);
+END;
+
+-- =========================
+-- INDEXES: Users / Auth
+-- =========================
+
+/* AppUser: índice por email (login) e created_at include para relatórios. */
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
+    WHERE i.name = 'IX_AppUser_Email' AND t.name = 'AppUser'
+)
+BEGIN
+    CREATE INDEX IX_AppUser_Email
+    ON dbo.AppUser (email)
+    INCLUDE (is_active, created_at, last_login);
+END;
+
+GO
+
+PRINT 'Índices criados (ou já existentes).';
+
+--Ver estatísticas de uso dos índices (DMV)
 SELECT 
-    ca.city,
-    sp.code AS state_code,
-    SUM(COALESCE(sol.unit_price,0) * COALESCE(sol.quantity,0)) AS total_sales_amount
-FROM dbo.SalesOrder so
-JOIN dbo.SalesOrderLine sol   ON so.sales_order_id = sol.sales_order_id
-JOIN dbo.Customer c           ON so.customer_id = c.customer_id
-JOIN dbo.CustomerAddress ca   ON c.customer_id = ca.customer_id
-LEFT JOIN dbo.StateProvince sp ON ca.state_province_id = sp.state_province_id
-GROUP BY ca.city, sp.code
-ORDER BY total_sales_amount DESC;
+    db_name(ius.database_id) AS database_name,
+    OBJECT_NAME(i.object_id) AS table_name,
+    i.name AS index_name,
+    i.index_id,
+    ius.user_seeks, ius.user_scans, ius.user_lookups, ius.user_updates,
+    ius.last_user_seek, ius.last_user_scan, ius.last_user_lookup, ius.last_user_update
+FROM sys.indexes i
+LEFT JOIN sys.dm_db_index_usage_stats ius
+    ON i.object_id = ius.object_id AND i.index_id = ius.index_id AND ius.database_id = DB_ID()
+WHERE OBJECTPROPERTY(i.object_id, 'IsUserTable') = 1
+ORDER BY ius.user_seeks + ius.user_scans + ius.user_lookups DESC;
 
 
--- Procura por sales_order_id nas linhas
-CREATE INDEX IX_SalesOrderLine_order ON dbo.SalesOrderLine (sales_order_id) 
-INCLUDE (unit_price, quantity);
-
--- Junções por customer_id e procura frequente por order_date (útil para Q3)
-CREATE INDEX IX_SalesOrder_customer_date ON dbo.SalesOrder (customer_id, order_date);
-
--- Filtro/agrupamento por cidade/estado
-CREATE INDEX IX_CustomerAddress_city_state ON dbo.CustomerAddress (city, state_province_id) 
-INCLUDE (customer_id);
-
--- Junção por state_province_id -> pega o código rapidamente
-CREATE INDEX IX_StateProvince_pk_include_code ON dbo.StateProvince (state_province_id) INCLUDE (code);
-
+--Ver estatísticas físicas (fragmentação)
 SELECT 
-    pm.model,
-    pv.product_variant_id,
-    pv.variant_name,
-    SUM(COALESCE(sol.unit_price,0) * COALESCE(sol.quantity,0)) AS total_product_sales
-FROM dbo.SalesOrderLine sol
-JOIN dbo.ProductVariant pv  ON sol.product_variant_id = pv.product_variant_id
-JOIN dbo.ProductMaster pm   ON pv.product_master_id = pm.product_master_id
-GROUP BY pm.model, pv.product_variant_id, pv.variant_name
-HAVING SUM(COALESCE(sol.unit_price,0) * COALESCE(sol.quantity,0)) > 1000
-ORDER BY total_product_sales DESC;
+    OBJECT_NAME(ps.object_id) AS table_name,
+    i.name AS index_name,
+    ps.index_id,
+    ps.avg_fragmentation_in_percent,
+    ps.page_count
+FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, 'LIMITED') ps
+JOIN sys.indexes i ON ps.object_id = i.object_id AND ps.index_id = i.index_id
+WHERE OBJECTPROPERTY(ps.object_id, 'IsUserTable') = 1
+ORDER BY ps.avg_fragmentation_in_percent DESC;
 
-
--- Junção e agregação por produto
-CREATE INDEX IX_SalesOrderLine_product ON dbo.SalesOrderLine (product_variant_id)
-INCLUDE (unit_price, quantity);
-
--- Acesso rápido ao model via PV -> PM
-CREATE INDEX IX_ProductVariant_master ON dbo.ProductVariant (product_master_id)
-INCLUDE (variant_name);
-
-
+--Query para listar todos os índices
 SELECT 
-    YEAR(so.order_date) AS sales_year,
-    pc.name AS category,
-    SUM(COALESCE(sol.quantity,0)) AS total_units
-FROM dbo.SalesOrderLine sol
-JOIN dbo.SalesOrder so        ON sol.sales_order_id = so.sales_order_id
-JOIN dbo.ProductVariant pv    ON sol.product_variant_id = pv.product_variant_id
-JOIN dbo.ProductMaster pm     ON pv.product_master_id = pm.product_master_id
-LEFT JOIN dbo.ProductCategory pc ON pm.category_id = pc.category_id
-GROUP BY YEAR(so.order_date), pc.name
-ORDER BY sales_year, category;
-
-
--- Usado na Q1 e Q3
-CREATE INDEX IX_SalesOrder_orderdate ON dbo.SalesOrder (order_date);
-
--- Cadeia de junções por chaves
-CREATE INDEX IX_ProductMaster_category ON dbo.ProductMaster (category_id);
-
-
-SELECT 
-    i.name,
+    s.name AS schema_name,
+    t.name AS table_name,
+    i.name AS index_name,
     i.index_id,
     i.type_desc,
-    t.name AS table_name
-FROM sys.indexes AS i
-JOIN sys.tables  AS t ON i.object_id = t.object_id
-WHERE t.name = 'SalesOrderLine';
+    i.is_unique,
+    i.is_disabled,
+    i.fill_factor
+FROM sys.indexes i
+JOIN sys.tables t ON i.object_id = t.object_id
+JOIN sys.schemas s ON t.schema_id = s.schema_id
+WHERE t.is_ms_shipped = 0
+ORDER BY schema_name, table_name, i.name;
