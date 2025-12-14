@@ -4,142 +4,53 @@ SET STATISTICS TIME ON;
 use AdventureWorks
 GO
 
--- =========================
--- INDEXES: Products
--- =========================
 
-/* ProductVariant: índice por product_master_id para junções com ProductMaster. */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
-    WHERE i.name = 'IX_ProductVariant_ProductMaster' AND t.name = 'ProductVariant'
-)
-BEGIN
-    CREATE INDEX IX_ProductVariant_ProductMaster
-    ON dbo.ProductVariant (product_master_id)
-    INCLUDE (variant_name, color_id);
-END;
-
-/* ProductVariant: índice por legacy_product_key (se tiveres queries para mapear legacy -> novo). */
-IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('dbo.ProductVariant') AND name = 'legacy_product_key')
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
-        WHERE i.name = 'IX_ProductVariant_LegacyKey' AND t.name = 'ProductVariant'
-    )
-    BEGIN
-        CREATE INDEX IX_ProductVariant_LegacyKey
-        ON dbo.ProductVariant (legacy_product_key);
-    END
-END;
-
-/* ProductMaster: índice por category_id para agregações por categoria. */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
-    WHERE i.name = 'IX_ProductMaster_Category' AND t.name = 'ProductMaster'
-)
-BEGIN
-    CREATE INDEX IX_ProductMaster_Category
-    ON dbo.ProductMaster (category_id);
-END;
-
--- =========================
--- INDEXES: Dimension / Lookup tables
--- =========================
-
-/* SalesTerritory: índice por region (usado em filtros por região). */
-IF NOT EXISTS (
-    SELECT 1 
-    FROM sys.indexes i 
-    JOIN sys.tables t ON i.object_id = t.object_id
-    WHERE i.name = 'IX_SalesTerritory_Region'
-      AND t.name = 'SalesTerritory'
-)
-BEGIN
-    CREATE INDEX IX_SalesTerritory_Region
-    ON dbo.SalesTerritory (region);
-END;
-
-/* Currency: índice por code para lookup rápido. */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
-    WHERE i.name = 'IX_Currency_Code' AND t.name = 'Currency'
-)
-BEGIN
-    CREATE INDEX IX_Currency_Code
-    ON dbo.Currency (code);
-END;
-
-/* StateProvince: índice por code para lookup e joins. */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
-    WHERE i.name = 'IX_StateProvince_Code' AND t.name = 'StateProvince'
-)
-BEGIN
-    CREATE INDEX IX_StateProvince_Code
-    ON dbo.StateProvince (code)
-    INCLUDE (name, country_id);
-END;
-
-/* CountryRegion: índice por code. */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
-    WHERE i.name = 'IX_CountryRegion_Code' AND t.name = 'CountryRegion'
-)
-BEGIN
-    CREATE INDEX IX_CountryRegion_Code
-    ON dbo.CountryRegion (code)
-    INCLUDE (name);
-END;
-
--- =========================
--- INDEXES: Users / Auth
--- =========================
-
-/* AppUser: índice por email (login) e created_at include para relatórios. */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes i JOIN sys.tables t ON i.object_id = t.object_id
-    WHERE i.name = 'IX_AppUser_Email' AND t.name = 'AppUser'
-)
-BEGIN
-    CREATE INDEX IX_AppUser_Email
-    ON dbo.AppUser (email)
-    INCLUDE (is_active, created_at, last_login);
-END;
-
-GO
 
 /* indices para as queries do enunciado */
-/* SalesOrderLine: acelera joins por sales_order_id e evita lookups ao calcular totais */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes WHERE name='IX_SalesOrderLine_SalesOrder' AND object_id=OBJECT_ID('dbo.SalesOrderLine')
-)
-CREATE INDEX IX_SalesOrderLine_SalesOrder
-ON dbo.SalesOrderLine (sales_order_id)
-INCLUDE (unit_price, quantity, product_variant_id);
+/* Q1: vendas por cidade/estado
+   - City + state_province_id: agrupa e distingue cidades por estado
+   - INCLUDE customer_id: ajuda joins a partir da morada */
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_CustomerAddress_City_State' AND object_id=OBJECT_ID('dbo.CustomerAddress'))
+BEGIN
+    CREATE INDEX IX_CustomerAddress_City_State
+    ON dbo.CustomerAddress (city, state_province_id)
+    INCLUDE (customer_id);
+END
+GO
 
-/* SalesOrderLine: acelera agregação por produto (Query 2 e Query 3) */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes WHERE name='IX_SalesOrderLine_ProductVariant' AND object_id=OBJECT_ID('dbo.SalesOrderLine')
-)
-CREATE INDEX IX_SalesOrderLine_ProductVariant
-ON dbo.SalesOrderLine (product_variant_id)
-INCLUDE (unit_price, quantity, sales_order_id);
+/* Q1/Q3: SalesOrder
+   - customer_id: join ao Customer
+   - order_date: agrupamento por ano (YEAR(order_date))
+   - INCLUDE sales_territory_id: evita lookup quando precisas do território */
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_SalesOrder_Customer_OrderDate' AND object_id=OBJECT_ID('dbo.SalesOrder'))
+BEGIN
+    CREATE INDEX IX_SalesOrder_Customer_OrderDate
+    ON dbo.SalesOrder (customer_id, order_date)
+    INCLUDE (sales_territory_id);
+END
+GO
 
-/* SalesOrder: acelera joins por customer_id e agrupamento por ano (Query 1 e 3) */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes WHERE name='IX_SalesOrder_Customer_OrderDate' AND object_id=OBJECT_ID('dbo.SalesOrder')
-)
-CREATE INDEX IX_SalesOrder_Customer_OrderDate
-ON dbo.SalesOrder (customer_id, order_date)
-INCLUDE (sales_territory_id);
+/* Q1: SalesOrderLine por sales_order_id
+   - acelera join SO->SOL e o cálculo SUM(unit_price*quantity)
+   - INCLUDE colunas usadas no cálculo e ligação ao produto */
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_SalesOrderLine_SalesOrder' AND object_id=OBJECT_ID('dbo.SalesOrderLine'))
+BEGIN
+    CREATE INDEX IX_SalesOrderLine_SalesOrder
+    ON dbo.SalesOrderLine (sales_order_id)
+    INCLUDE (unit_price, quantity, product_variant_id);
+END
+GO
 
-/* CustomerAddress: acelera agrupamento por cidade/estado (Query 1) */
-IF NOT EXISTS (
-    SELECT 1 FROM sys.indexes WHERE name='IX_CustomerAddress_City_State' AND object_id=OBJECT_ID('dbo.CustomerAddress')
-)
-CREATE INDEX IX_CustomerAddress_City_State
-ON dbo.CustomerAddress (city, state_province_id)
-INCLUDE (customer_id);
+/* Q2/Q3: SalesOrderLine por product_variant_id
+   - acelera agregações por produto (HAVING > 1000 e por categoria/ano)
+   - INCLUDE sales_order_id para join rápido ao cabeçalho */
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_SalesOrderLine_ProductVariant' AND object_id=OBJECT_ID('dbo.SalesOrderLine'))
+BEGIN
+    CREATE INDEX IX_SalesOrderLine_ProductVariant
+    ON dbo.SalesOrderLine (product_variant_id)
+    INCLUDE (unit_price, quantity, sales_order_id);
+END
+GO
 
 PRINT 'Índices criados (ou já existentes).';
 
@@ -185,3 +96,92 @@ JOIN sys.tables t ON i.object_id = t.object_id
 JOIN sys.schemas s ON t.schema_id = s.schema_id
 WHERE t.is_ms_shipped = 0
 ORDER BY schema_name, table_name, i.name;
+
+
+-- Seletividade e densidade da combinação (cidade, estado)
+
+-- Q1 (vendas por cidade + estado): CustomerAddress(city, state_province_id)
+SELECT
+  COUNT(*) AS total_rows,
+  COUNT(DISTINCT CONCAT(city,'|',state_province_id)) AS distinct_city_state,
+  CAST(COUNT(DISTINCT CONCAT(city,'|',state_province_id)) AS float)/NULLIF(COUNT(*),0) AS selectivity,
+  CAST(COUNT(*) AS float)/NULLIF(COUNT(DISTINCT CONCAT(city,'|',state_province_id)),0) AS density
+FROM dbo.CustomerAddress;
+
+
+-- Q2/Q3 (por produto): SalesOrderLine(product_variant_id)
+SELECT
+  COUNT(*) AS total_rows,
+  COUNT(DISTINCT product_variant_id) AS distinct_products,
+  CAST(COUNT(DISTINCT product_variant_id) AS float)/NULLIF(COUNT(*),0) AS selectivity,
+  CAST(COUNT(*) AS float)/NULLIF(COUNT(DISTINCT product_variant_id),0) AS density
+FROM dbo.SalesOrderLine;
+
+
+-- Q3 (por ano): SalesOrder(order_date) (seletividade por dia; no relatório podes comentar “ano”)
+SELECT
+  COUNT(*) AS total_rows,
+  COUNT(DISTINCT order_date) AS distinct_dates,
+  CAST(COUNT(DISTINCT order_date) AS float)/NULLIF(COUNT(*),0) AS selectivity,
+  CAST(COUNT(*) AS float)/NULLIF(COUNT(DISTINCT order_date),0) AS density
+FROM dbo.SalesOrder;
+
+-- script para apagar e comparar 
+
+IF EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_SalesOrderLine_SalesOrder' AND object_id=OBJECT_ID('dbo.SalesOrderLine'))
+    DROP INDEX IX_SalesOrderLine_SalesOrder ON dbo.SalesOrderLine;
+
+IF EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_SalesOrderLine_ProductVariant' AND object_id=OBJECT_ID('dbo.SalesOrderLine'))
+    DROP INDEX IX_SalesOrderLine_ProductVariant ON dbo.SalesOrderLine;
+
+IF EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_SalesOrder_Customer_OrderDate' AND object_id=OBJECT_ID('dbo.SalesOrder'))
+    DROP INDEX IX_SalesOrder_Customer_OrderDate ON dbo.SalesOrder;
+
+IF EXISTS (SELECT 1 FROM sys.indexes WHERE name='IX_CustomerAddress_City_State' AND object_id=OBJECT_ID('dbo.CustomerAddress'))
+    DROP INDEX IX_CustomerAddress_City_State ON dbo.CustomerAddress;
+GO
+
+-- Queries do enunciado
+
+-- Q1
+SELECT 
+    ca.city,
+    sp.code AS state_code,
+    SUM(COALESCE(sol.unit_price,0) * COALESCE(sol.quantity,0)) AS total_sales_amount
+FROM dbo.SalesOrder so
+JOIN dbo.SalesOrderLine sol    ON so.sales_order_id = sol.sales_order_id
+JOIN dbo.Customer c            ON so.customer_id = c.customer_id
+JOIN dbo.CustomerAddress ca    ON c.customer_id = ca.customer_id
+LEFT JOIN dbo.StateProvince sp ON ca.state_province_id = sp.state_province_id
+GROUP BY ca.city, sp.code
+ORDER BY total_sales_amount DESC;
+GO
+
+-- Q2
+SELECT 
+    pm.model,
+    pv.product_variant_id,
+    pv.variant_name,
+    SUM(COALESCE(sol.unit_price,0) * COALESCE(sol.quantity,0)) AS total_product_sales
+FROM dbo.SalesOrderLine sol
+JOIN dbo.ProductVariant pv  ON sol.product_variant_id = pv.product_variant_id
+JOIN dbo.ProductMaster pm   ON pv.product_master_id = pm.product_master_id
+GROUP BY pm.model, pv.product_variant_id, pv.variant_name
+HAVING SUM(COALESCE(sol.unit_price,0) * COALESCE(sol.quantity,0)) > 1000
+ORDER BY total_product_sales DESC;
+GO
+
+
+-- Q3
+SELECT 
+    YEAR(so.order_date) AS sales_year,
+    pc.name AS category,
+    SUM(COALESCE(sol.quantity,0)) AS total_units
+FROM dbo.SalesOrderLine sol
+JOIN dbo.SalesOrder so       ON sol.sales_order_id = so.sales_order_id
+JOIN dbo.ProductVariant pv   ON sol.product_variant_id = pv.product_variant_id
+JOIN dbo.ProductMaster pm    ON pv.product_master_id = pm.product_master_id
+LEFT JOIN dbo.ProductCategory pc ON pm.category_id = pc.category_id
+GROUP BY YEAR(so.order_date), pc.name
+ORDER BY sales_year, category;
+GO
