@@ -15,9 +15,8 @@ GO
 --=================================================================================
 --                                   PRODUCTS
 --=================================================================================
-
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ProductColor')
-BEGIN
+    BEGIN
     CREATE TABLE dbo.ProductColor (
         color_id INT IDENTITY(1,1) CONSTRAINT PK_ProductColor PRIMARY KEY,
         name NVARCHAR(50)  NOT NULL
@@ -181,7 +180,7 @@ BEGIN
         occupation NVARCHAR(50),
         number_cars_owned INT,
         date_first_purchase DATE,
-        nif NVARCHAR(20) -- To be encrypted
+        nif VARBINARY(256)
     );
 END
 GO

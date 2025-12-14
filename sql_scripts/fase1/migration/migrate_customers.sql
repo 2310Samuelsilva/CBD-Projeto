@@ -60,39 +60,13 @@ WHERE c.StateProvinceCode IS NOT NULL
   );
 GO
 
--- /*===============================================================================
---  STEP 3: SETUP ENCRYPTION FOR CUSTOMER NIF
---  - Create Master Key, Certificate, and Symmetric Key if not present.
--- ===============================================================================*/
--- PRINT('STEP 3 - Setting up encryption for NIF...');
--- IF NOT EXISTS (SELECT * FROM sys.symmetric_keys WHERE name = '##MS_DatabaseMasterKey##')
--- BEGIN
---     CREATE MASTER KEY ENCRYPTION BY PASSWORD = 'ChaveSegura123!';
---     PRINT('Database Master Key created.');
--- END;
-
--- IF NOT EXISTS (SELECT * FROM sys.certificates WHERE name = 'CertNIF')
--- BEGIN
---     CREATE CERTIFICATE CertNIF WITH SUBJECT = 'Certificado NIF';
---     PRINT('Certificate CertNIF created.');
--- END;
-
--- IF NOT EXISTS (SELECT * FROM sys.symmetric_keys WHERE name = 'KeyNIF')
--- BEGIN
---     CREATE SYMMETRIC KEY KeyNIF
---         WITH ALGORITHM = AES_256
---         ENCRYPTION BY CERTIFICATE CertNIF;
---     PRINT('Symmetric Key KeyNIF created.');
--- END;
--- GO
-
 /*===============================================================================
  STEP 4: MIGRATE CUSTOMERS
  - Encrypt NIF using KeyNIF.
  - Skip duplicates by email.
 ===============================================================================*/
 PRINT('STEP 4 - Inserting Customers...');
--- OPEN SYMMETRIC KEY KeyNIF DECRYPTION BY CERTIFICATE CertNIF;
+OPEN SYMMETRIC KEY KeyNIF DECRYPTION BY CERTIFICATE CertNIF;
 
 INSERT INTO dbo.Customer (
     title,
@@ -124,8 +98,8 @@ SELECT
     dbo.TrimSpaces(c.Occupation),
     c.NumberCarsOwned,
     c.DateFirstPurchase,
-    --ENCRYPTBYKEY(KEY_GUID('KeyNIF'), CONVERT(VARBINARY(MAX), dbo.TrimSpaces(c.NIF)))
-    c.NIF
+    ENCRYPTBYKEY(KEY_GUID('KeyNIF'), CONVERT(VARBINARY(MAX), dbo.TrimSpaces(c.NIF))
+    )
 FROM AdventureWorksLegacy.dbo.Customer AS c
 WHERE c.EmailAddress IS NOT NULL
   AND NOT EXISTS (
@@ -134,7 +108,7 @@ WHERE c.EmailAddress IS NOT NULL
         WHERE n.email_address = dbo.TrimSpaces(c.EmailAddress)
   );
 
--- CLOSE SYMMETRIC KEY KeyNIF;
+CLOSE SYMMETRIC KEY KeyNIF;
 GO
 
 /*===============================================================================

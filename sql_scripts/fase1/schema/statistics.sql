@@ -86,7 +86,7 @@ BEGIN
 
     DROP TABLE #tmpStats;
 
-    PRINT('Estat�sticas recolhidas com sucesso e registadas em dbStatistics.');
+    PRINT('Estatasticas recolhidas com sucesso e registadas em dbStatistics.');
 END
 GO
 

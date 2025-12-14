@@ -47,7 +47,7 @@ BEGIN
     DECLARE @new_app_user_id INT = SCOPE_IDENTITY();
 
     INSERT INTO dbo.PasswordRecoveryQuestion (app_user_id, question_text, answer_hash)
-    VALUES (@new_app_user_id, dbo.ComputeHash(@question), dbo.ComputeHash(@answer));
+    VALUES (@new_app_user_id, @question, dbo.ComputeHash(@answer));
 
     PRINT 'User created successfully.';
 END;
