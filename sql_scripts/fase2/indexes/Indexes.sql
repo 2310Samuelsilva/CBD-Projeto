@@ -100,7 +100,19 @@ ORDER BY schema_name, table_name, i.name;
 
 -- Seletividade e densidade da combinação (cidade, estado)
 
--- Q1 (vendas por cidade + estado): CustomerAddress(city, state_province_id)
+-- ==========================================================
+-- Q1 – Análise de seletividade e densidade
+-- Tabela: CustomerAddress
+-- Colunas: (city, state_province_id)
+--
+-- Objetivo:
+-- Avaliar se a combinação cidade + estado é adequada
+-- para indexação em queries que agregam vendas por localização.
+--
+-- Justificação:
+-- Cidades com o mesmo nome mas em estados diferentes
+-- devem ser consideradas distintas (requisito do enunciado).
+-- ==========================================================
 SELECT
   COUNT(*) AS total_rows,
   COUNT(DISTINCT CONCAT(city,'|',state_province_id)) AS distinct_city_state,
@@ -109,7 +121,17 @@ SELECT
 FROM dbo.CustomerAddress;
 
 
--- Q2/Q3 (por produto): SalesOrderLine(product_variant_id)
+-- ==========================================================
+-- Q2 / Q3 – Análise de seletividade e densidade
+-- Tabela: SalesOrderLine
+-- Coluna: product_variant_id
+--
+-- Objetivo:
+-- Avaliar a eficácia de indexar o produto associado às vendas,
+-- usado em:
+--  - Produtos com vendas > 1000€
+--  - Número de produtos vendidos por categoria
+-- ==========================================================
 SELECT
   COUNT(*) AS total_rows,
   COUNT(DISTINCT product_variant_id) AS distinct_products,
@@ -118,7 +140,19 @@ SELECT
 FROM dbo.SalesOrderLine;
 
 
--- Q3 (por ano): SalesOrder(order_date) (seletividade por dia; no relatório podes comentar “ano”)
+-- ==========================================================
+-- Q3 – Análise de seletividade e densidade
+-- Tabela: SalesOrder
+-- Coluna: order_date
+--
+-- Objetivo:
+-- Avaliar a granularidade temporal das vendas
+-- (agrupamento por ano).
+--
+-- Nota:
+-- A seletividade por dia é baixa, mas a coluna
+-- é essencial para agrupamentos temporais.
+-- ==========================================================
 SELECT
   COUNT(*) AS total_rows,
   COUNT(DISTINCT order_date) AS distinct_dates,
@@ -185,3 +219,4 @@ LEFT JOIN dbo.ProductCategory pc ON pm.category_id = pc.category_id
 GROUP BY YEAR(so.order_date), pc.name
 ORDER BY sales_year, category;
 GO
+
