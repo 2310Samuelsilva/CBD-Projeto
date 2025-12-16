@@ -1,0 +1,19 @@
+﻿
+    [
+        {
+            "_id": 1,
+            "email_address": "jon24@adventure-works.com",
+            "first_name": "Jon",
+            "last_name": "Yang",
+            "birth_date": "1966-04-08",
+            "number_cars_owned": 0
+        },
+        {
+            "_id": 2,
+            "email_address": "eugene10@adventure-works.com",
+            "first_name": "Eugene",
+            "last_name": "Huang",
+            "birth_date": "1965-05-14",
+            "number_cars_owned": 1
+        }
+    ]
