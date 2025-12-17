@@ -1,0 +1,32 @@
+Queries: 
+
+1.
+Find { category: { $exists: true, $nin: [null, ""] } } 
+
+Project { _id: 1, model: 1, category: 1, subcategory: 1, product_line: 1, class: 1 } 
+
+Sort { model: 1 } 
+
+
+2.
+Find { category: "Bikes", variants: { $exists: true, $ne: [] } } 
+
+Project { _id: 1, model: 1, category: 1, "variants.variant_id": 1, "variants.list_price": 1 } 
+
+Sort { model: 1 } 
+
+
+
+
+3.
+[ 
+
+  { $match: { category: { $exists: true, $nin: [null, ""] } } }, 
+
+  { $unwind: { path: "$variants", preserveNullAndEmptyArrays: false } }, 
+
+  { $group: { _id: "$category", total_variants: { $sum: 1 } } }, 
+
+  { $sort: { total_variants: -1 } } 
+
+] 
