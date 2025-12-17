@@ -16,6 +16,6 @@ SELECT
     number_cars_owned
 FROM dbo.Customer
 WHERE email_address IS NOT NULL
-FOR JSON AUTO, ROOT('customers')) AS test;  -- Coloca todos os registros dentro de um array "customers"
+FOR JSON AUTO, ROOT('customers')) AS test;  
 GO
 
