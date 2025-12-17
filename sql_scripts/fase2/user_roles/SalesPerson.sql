@@ -4,6 +4,7 @@
   - Apenas leitura para restantes objetos
 ============================================================*/
 USE AdventureWorks;
+GO
 -- Criar role se não existir
 IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name = 'roleSalesPerson')
 BEGIN

@@ -3,7 +3,8 @@
   Utilizador: SalesPersonUser
   Objetivo: Validar permissões de leitura/escrita e falhas
 ============================================================*/
-
+use AdventureWorks
+GO
 -- Assumir identidade do SalesPersonUser
 EXECUTE AS USER = 'SalesPersonUser';
 GO

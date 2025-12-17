@@ -69,18 +69,6 @@ WHERE OBJECTPROPERTY(i.object_id, 'IsUserTable') = 1
 ORDER BY ius.user_seeks + ius.user_scans + ius.user_lookups DESC;
 
 
---Ver estatísticas físicas (fragmentação)
-SELECT 
-    OBJECT_NAME(ps.object_id) AS table_name,
-    i.name AS index_name,
-    ps.index_id,
-    ps.avg_fragmentation_in_percent,
-    ps.page_count
-FROM sys.dm_db_index_physical_stats(DB_ID(), NULL, NULL, NULL, 'LIMITED') ps
-JOIN sys.indexes i ON ps.object_id = i.object_id AND ps.index_id = i.index_id
-WHERE OBJECTPROPERTY(ps.object_id, 'IsUserTable') = 1
-ORDER BY ps.avg_fragmentation_in_percent DESC;
-
 --Query para listar todos os índices
 SELECT 
     s.name AS schema_name,
